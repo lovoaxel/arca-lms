@@ -8,6 +8,9 @@ import {
   CheckCircle2,
   CalendarDays,
   Flame,
+  AlertTriangle,
+  Zap,
+  BarChart3,
 } from "lucide-react";
 import Link from "next/link";
 import type { Assignment, CalendarEvent } from "@/types";
@@ -116,6 +119,12 @@ const MOCK_CALENDAR_EVENTS: CalendarEvent[] = [
   },
 ];
 
+// Calificaciones bajas
+const LOW_GRADE_COURSES = [
+  { name: "Precálculo",                          grade: 0,   color: "bg-purple-500" },
+  { name: "Habilidades para el Emprendimiento",  grade: 4.2, color: "bg-green-500" },
+];
+
 // ─── Helpers ───────────────────────────────────────────────────
 
 function getGreeting(): string {
@@ -153,6 +162,14 @@ function formatEventDate(dateStr: string, startTime?: string): string {
 
   if (startTime) label += ` · ${startTime}`;
   return label;
+}
+
+// Check if assignment is within 48 hours
+function isWithin48h(iso: string): boolean {
+  const due = new Date(iso);
+  const now = new Date();
+  const diffMs = due.getTime() - now.getTime();
+  return diffMs > 0 && diffMs < 48 * 60 * 60 * 1000;
 }
 
 const EVENT_TYPE_LABELS: Record<CalendarEvent["type"], string> = {
@@ -209,13 +226,16 @@ function StatCard({
 export default function DashboardPage() {
   const greeting = getGreeting();
 
+  // Urgentes (próximas 48h)
+  const urgent48h = MOCK_URGENT_ASSIGNMENTS.filter((a) => isWithin48h(a.dueDate));
+
   const stats = {
     pendingAssignments: MOCK_URGENT_ASSIGNMENTS.filter((a) => a.status === "pending").length,
     upcomingDeadlines: MOCK_URGENT_ASSIGNMENTS.filter((a) => {
       const diff = new Date(a.dueDate).getTime() - Date.now();
       return diff > 0 && diff < 7 * 24 * 60 * 60 * 1000;
     }).length,
-    overallAverage: 8.6,
+    overallAverage: 6.1,
     activeCourses: 5,
   };
 
@@ -247,6 +267,72 @@ export default function DashboardPage() {
         </div>
       </section>
 
+      {/* ── Urgente Alert (48h) ─────────────────────────────── */}
+      {urgent48h.length > 0 && (
+        <section>
+          <div className="bg-red-500/5 border border-red-500/25 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Zap className="w-4 h-4 text-red-400" />
+              <h3 className="text-sm font-semibold text-red-400">
+                ¡Atención! {urgent48h.length} entrega{urgent48h.length > 1 ? "s" : ""} en las próximas 48 horas
+              </h3>
+            </div>
+            <div className="space-y-2">
+              {urgent48h.map((a) => {
+                const { label } = formatDueDate(a.dueDate);
+                return (
+                  <div key={a.id} className="flex items-center justify-between gap-3 py-1.5 border-b border-red-500/10 last:border-0">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className={`w-1.5 h-1.5 rounded-full ${a.courseColor} flex-shrink-0`} />
+                      <span className="text-sm text-slate-300 truncate">{a.title}</span>
+                      <span className="text-xs text-slate-600 hidden sm:inline">— {a.courseName}</span>
+                    </div>
+                    <span className="text-xs font-semibold text-red-400 flex-shrink-0">{label}</span>
+                  </div>
+                );
+              })}
+            </div>
+            <Link
+              href="/tareas"
+              className="mt-3 flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 transition-colors"
+            >
+              Ver todas las tareas <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* ── Low Grade Alert ─────────────────────────────────── */}
+      {LOW_GRADE_COURSES.length > 0 && (
+        <section>
+          <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <AlertTriangle className="w-4 h-4 text-yellow-400" />
+              <h3 className="text-sm font-semibold text-yellow-400">
+                Calificaciones bajas en {LOW_GRADE_COURSES.length} materia{LOW_GRADE_COURSES.length > 1 ? "s" : ""}
+              </h3>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {LOW_GRADE_COURSES.map((c) => (
+                <div key={c.name} className="flex items-center gap-2 px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg">
+                  <div className={`w-2 h-2 rounded-full ${c.color}`} />
+                  <span className="text-xs text-slate-300">{c.name}</span>
+                  <span className={`text-xs font-bold ${c.grade < 6 ? "text-red-400" : "text-yellow-400"}`}>
+                    {c.grade.toFixed(1)}/10
+                  </span>
+                </div>
+              ))}
+            </div>
+            <Link
+              href="/calificaciones"
+              className="mt-3 flex items-center gap-1.5 text-xs text-yellow-400 hover:text-yellow-300 transition-colors"
+            >
+              Ver calificaciones completas <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+        </section>
+      )}
+
       {/* ── Stats cards ────────────────────────────────────── */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard
@@ -268,7 +354,7 @@ export default function DashboardPage() {
           label="Promedio general"
           value={stats.overallAverage.toFixed(1)}
           sub="Calificación actual"
-          accentClass="bg-green-500/15 text-green-400"
+          accentClass={stats.overallAverage < 6 ? "bg-red-500/15 text-red-400" : stats.overallAverage < 8 ? "bg-yellow-500/15 text-yellow-400" : "bg-green-500/15 text-green-400"}
         />
         <StatCard
           icon={BookOpen}
@@ -277,6 +363,54 @@ export default function DashboardPage() {
           sub="Este semestre"
           accentClass="bg-blue-500/15 text-blue-400"
         />
+      </section>
+
+      {/* ── Quick Actions ───────────────────────────────────── */}
+      <section>
+        <p className="text-xs font-semibold text-slate-600 uppercase tracking-widest mb-3">Acciones rápidas</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <Link
+            href="/tareas"
+            className="flex items-center gap-3 p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-orange-500/30 hover:bg-orange-500/5 transition-all group"
+          >
+            <div className="w-9 h-9 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-orange-500/20 transition-colors">
+              <ClipboardList className="w-4.5 h-4.5 text-orange-400" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-200">Ver tareas</p>
+              <p className="text-xs text-slate-600">{stats.pendingAssignments} pendientes</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-slate-700 ml-auto group-hover:text-orange-400 transition-colors" />
+          </Link>
+
+          <Link
+            href="/calendario"
+            className="flex items-center gap-3 p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-blue-500/30 hover:bg-blue-500/5 transition-all group"
+          >
+            <div className="w-9 h-9 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500/20 transition-colors">
+              <CalendarDays className="w-4.5 h-4.5 text-blue-400" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-200">Ver calendario</p>
+              <p className="text-xs text-slate-600">Entregas del semestre</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-slate-700 ml-auto group-hover:text-blue-400 transition-colors" />
+          </Link>
+
+          <Link
+            href="/calificaciones"
+            className="flex items-center gap-3 p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-green-500/30 hover:bg-green-500/5 transition-all group"
+          >
+            <div className="w-9 h-9 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-green-500/20 transition-colors">
+              <BarChart3 className="w-4.5 h-4.5 text-green-400" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-200">Calificaciones</p>
+              <p className="text-xs text-slate-600">2 materias en alerta</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-slate-700 ml-auto group-hover:text-green-400 transition-colors" />
+          </Link>
+        </div>
       </section>
 
       {/* ── Grid: Tareas + Eventos ──────────────────────────── */}
@@ -302,7 +436,6 @@ export default function DashboardPage() {
               return (
                 <li key={assignment.id} className="px-5 py-3.5 hover:bg-slate-800/40 transition-colors">
                   <div className="flex items-start gap-3">
-                    {/* Indicador de prioridad */}
                     <div className="mt-0.5 flex-shrink-0">
                       {assignment.status === "submitted" ? (
                         <CheckCircle2 className="w-4 h-4 text-green-500" />
@@ -315,18 +448,15 @@ export default function DashboardPage() {
                         {assignment.title}
                       </p>
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        {/* Dot de curso */}
                         <div className="flex items-center gap-1.5">
                           <span className={`w-1.5 h-1.5 rounded-full ${assignment.courseColor}`} />
                           <span className="text-xs text-slate-500">{assignment.courseName}</span>
                         </div>
-                        {/* Prioridad badge */}
                         <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${PRIORITY_STYLES[assignment.priority]}`}>
                           {PRIORITY_LABELS[assignment.priority]}
                         </span>
                       </div>
                     </div>
-                    {/* Fecha */}
                     <div className="flex-shrink-0 text-right">
                       <span className={`text-xs font-medium ${isUrgent ? "text-red-400" : "text-slate-500"}`}>
                         {dueLabel}
@@ -360,7 +490,6 @@ export default function DashboardPage() {
               return (
                 <li key={event.id} className="px-5 py-3.5 hover:bg-slate-800/40 transition-colors">
                   <div className="flex items-center gap-3">
-                    {/* Barra lateral de color */}
                     <div className={`w-1 h-10 rounded-full ${event.courseColor ?? "bg-slate-600"} flex-shrink-0`} />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-slate-200 truncate">
