@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import {
   Home,
   BookOpen,
@@ -32,13 +33,18 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Calificaciones",  href: "/calificaciones",   icon: BarChart3    },
 ];
 
-// ─── Mock usuario ──────────────────────────────────────────────
-const CURRENT_USER = {
+// ─── Fallback usuario ──────────────────────────────────────────
+const FALLBACK_USER = {
   name: "Axel Lovo",
   initials: "AL",
   program: "Ingeniería en Sistemas Computacionales",
   semester: 3,
 };
+
+function getInitials(name: string | null | undefined): string {
+  if (!name) return "AL";
+  return name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
+}
 
 // ─── Sidebar Link Component ────────────────────────────────────
 function SidebarLink({ item, isActive, onClick }: {
@@ -70,6 +76,10 @@ function SidebarLink({ item, isActive, onClick }: {
 // ─── Sidebar Component ─────────────────────────────────────────
 function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
+
+  const userName = session?.user?.name ?? FALLBACK_USER.name;
+  const userInitials = getInitials(session?.user?.name) ?? FALLBACK_USER.initials;
 
   return (
     <aside className="flex flex-col h-full bg-slate-900 border-r border-slate-800/80">
@@ -77,7 +87,7 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
       <div className="flex items-center justify-between px-4 py-5 border-b border-slate-800/80">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center flex-shrink-0">
-            <GraduationCap className="w-4.5 h-4.5 text-white" />
+            <GraduationCap className="w-4 h-4 text-white" />
           </div>
           <div>
             <p className="text-sm font-semibold text-white leading-tight">Brightspace</p>
@@ -110,13 +120,14 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
       <div className="px-3 py-4 border-t border-slate-800/80">
         <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
           <div className="w-8 h-8 rounded-full bg-orange-500/20 border border-orange-500/30 flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-bold text-orange-400">{CURRENT_USER.initials}</span>
+            <span className="text-xs font-bold text-orange-400">{userInitials}</span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-slate-200 truncate">{CURRENT_USER.name}</p>
-            <p className="text-[10px] text-slate-500 truncate">Semestre {CURRENT_USER.semester}</p>
+            <p className="text-sm font-medium text-slate-200 truncate">{userName}</p>
+            <p className="text-[10px] text-slate-500 truncate">Semestre {FALLBACK_USER.semester}</p>
           </div>
           <button
+            onClick={() => signOut({ callbackUrl: "/login" })}
             className="text-slate-600 hover:text-slate-400 transition-colors"
             title="Cerrar sesión"
           >
@@ -131,8 +142,11 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
 // ─── Header Component ──────────────────────────────────────────
 function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
 
-  // Título de la página actual
+  const userName = session?.user?.name ?? FALLBACK_USER.name;
+  const userInitials = getInitials(session?.user?.name) ?? FALLBACK_USER.initials;
+
   const pageTitle = NAV_ITEMS.find(
     (item) => pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href))
   )?.label ?? "Dashboard";
@@ -152,20 +166,18 @@ function Header({ onMenuClick }: { onMenuClick: () => void }) {
 
       {/* Derecha */}
       <div className="flex items-center gap-2">
-        {/* Notificaciones */}
         <button className="relative p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors">
-          <Bell className="w-4.5 h-4.5" />
+          <Bell className="w-4 h-4" />
           <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-orange-400" />
         </button>
 
-        {/* Avatar */}
         <div className="flex items-center gap-2.5 pl-2 ml-1 border-l border-slate-800">
           <div className="hidden sm:block text-right">
-            <p className="text-xs font-medium text-slate-300 leading-tight">{CURRENT_USER.name}</p>
+            <p className="text-xs font-medium text-slate-300 leading-tight">{userName}</p>
             <p className="text-[10px] text-slate-600 leading-tight">Anáhuac</p>
           </div>
           <div className="w-8 h-8 rounded-full bg-orange-500/20 border border-orange-500/30 flex items-center justify-center">
-            <span className="text-xs font-bold text-orange-400">{CURRENT_USER.initials}</span>
+            <span className="text-xs font-bold text-orange-400">{userInitials}</span>
           </div>
         </div>
       </div>
@@ -193,12 +205,10 @@ export default function DashboardLayout({
       {/* Sidebar móvil — overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          {/* Backdrop */}
           <div
             className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm"
             onClick={() => setSidebarOpen(false)}
           />
-          {/* Drawer */}
           <div className="absolute left-0 top-0 bottom-0 w-60 z-50">
             <Sidebar onClose={() => setSidebarOpen(false)} />
           </div>
