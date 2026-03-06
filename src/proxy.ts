@@ -27,11 +27,12 @@ export async function proxy(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  if (!token) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
+  // DEV MODE: auth bypassed for screenshots
+  // if (!token) {
+  //   const loginUrl = new URL("/login", request.url);
+  //   loginUrl.searchParams.set("callbackUrl", pathname);
+  //   return NextResponse.redirect(loginUrl);
+  // }
 
   return NextResponse.next();
 }
