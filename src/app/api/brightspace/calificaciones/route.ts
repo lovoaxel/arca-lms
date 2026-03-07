@@ -7,6 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import { getCache, setCache, CACHE_TTL, CACHE_KEYS } from '@/lib/cache/cache';
+import { hasValidSession } from '@/lib/scraper/session';
 import { withPage } from '@/lib/scraper/scraper';
 import { scrapeCourses } from '@/lib/scraper/parsers/courses';
 import { scrapeGrades } from '@/lib/scraper/parsers/grades';
@@ -54,14 +55,29 @@ export async function GET(): Promise<NextResponse> {
     // 1. Verificar caché
     const cached = getCache<CourseGradeSummary[]>(CACHE_KEYS.calificaciones, CACHE_TTL.CALIFICACIONES);
     if (cached) {
-      return NextResponse.json({
+      const res = NextResponse.json({
         success: true,
         data: cached,
         source: 'cache',
       });
+      res.headers.set('X-Data-Source', 'real');
+      return res;
     }
 
-    // 2. Scraping: obtener cursos y luego calificaciones de cada uno
+    // 2. Verificar si hay sesión válida antes de lanzar Playwright
+    if (!hasValidSession()) {
+      console.warn('[API calificaciones] No hay sesión válida, usando mock data');
+      const res = NextResponse.json({
+        success: true,
+        data: MOCK_GRADES,
+        source: 'mock',
+        warning: 'No hay sesión de Brightspace. Exporta tu sesión para obtener datos reales.',
+      });
+      res.headers.set('X-Data-Source', 'mock');
+      return res;
+    }
+
+    // 3. Scraping: obtener cursos y luego calificaciones de cada uno
     const allGrades = await withPage(async (page) => {
       const courses = await scrapeCourses(page);
       if (!courses || courses.length === 0) return null;
@@ -110,27 +126,31 @@ export async function GET(): Promise<NextResponse> {
       return summaries;
     });
 
-    // 3. Guardar en caché
+    // 4. Guardar en caché
     if (allGrades && allGrades.length > 0) {
       setCache(CACHE_KEYS.calificaciones, allGrades, CACHE_TTL.CALIFICACIONES);
-      return NextResponse.json({
+      const res = NextResponse.json({
         success: true,
         data: allGrades,
         source: 'scraper',
       });
+      res.headers.set('X-Data-Source', 'real');
+      return res;
     }
 
-    // 4. Fallback
+    // 5. Fallback
     console.warn('[API calificaciones] Scraper no retornó datos, usando mock data');
-    return NextResponse.json({
+    const res = NextResponse.json({
       success: true,
       data: MOCK_GRADES,
       source: 'mock',
       warning: 'Usando datos de ejemplo. Exporta tu sesión de Brightspace para obtener datos reales.',
     });
+    res.headers.set('X-Data-Source', 'mock');
+    return res;
   } catch (err) {
     console.error('[API calificaciones] Error:', err);
-    return NextResponse.json(
+    const res = NextResponse.json(
       {
         success: false,
         error: 'Error al obtener calificaciones',
@@ -139,6 +159,8 @@ export async function GET(): Promise<NextResponse> {
       },
       { status: 500 }
     );
+    res.headers.set('X-Data-Source', 'mock');
+    return res;
   }
 }
 

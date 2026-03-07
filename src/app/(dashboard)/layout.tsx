@@ -90,8 +90,8 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
             <GraduationCap className="w-4 h-4 text-white" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-white leading-tight">Brightspace</p>
-            <p className="text-[10px] font-medium text-orange-400 uppercase tracking-wider leading-tight">Plus</p>
+            <p className="text-sm font-semibold text-white leading-tight">ARCA</p>
+            <p className="text-[10px] font-medium text-orange-400 uppercase tracking-wider leading-tight">LMS</p>
           </div>
         </div>
         {onClose && (

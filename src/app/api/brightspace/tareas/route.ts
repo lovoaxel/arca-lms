@@ -7,6 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import { getCache, setCache, CACHE_TTL, CACHE_KEYS } from '@/lib/cache/cache';
+import { hasValidSession } from '@/lib/scraper/session';
 import { withPage } from '@/lib/scraper/scraper';
 import { scrapeCourses } from '@/lib/scraper/parsers/courses';
 import { scrapeAssignments } from '@/lib/scraper/parsers/assignments';
@@ -56,14 +57,29 @@ export async function GET(): Promise<NextResponse> {
     // 1. Verificar caché global de tareas
     const cached = getCache<Assignment[]>(CACHE_KEYS.tareas, CACHE_TTL.TAREAS);
     if (cached) {
-      return NextResponse.json({
+      const res = NextResponse.json({
         success: true,
         data: cached,
         source: 'cache',
       });
+      res.headers.set('X-Data-Source', 'real');
+      return res;
     }
 
-    // 2. Scraping: primero obtener cursos, luego tareas de cada uno
+    // 2. Verificar si hay sesión válida antes de lanzar Playwright
+    if (!hasValidSession()) {
+      console.warn('[API tareas] No hay sesión válida, usando mock data');
+      const res = NextResponse.json({
+        success: true,
+        data: MOCK_ASSIGNMENTS,
+        source: 'mock',
+        warning: 'No hay sesión de Brightspace. Exporta tu sesión para obtener datos reales.',
+      });
+      res.headers.set('X-Data-Source', 'mock');
+      return res;
+    }
+
+    // 3. Scraping: primero obtener cursos, luego tareas de cada uno
     const allAssignments = await withPage(async (page) => {
       // Obtener lista de cursos
       const courses = await scrapeCourses(page);
@@ -92,27 +108,31 @@ export async function GET(): Promise<NextResponse> {
       return results;
     });
 
-    // 3. Guardar en caché si hay datos
+    // 4. Guardar en caché si hay datos
     if (allAssignments && allAssignments.length > 0) {
       setCache(CACHE_KEYS.tareas, allAssignments, CACHE_TTL.TAREAS);
-      return NextResponse.json({
+      const res = NextResponse.json({
         success: true,
         data: allAssignments,
         source: 'scraper',
       });
+      res.headers.set('X-Data-Source', 'real');
+      return res;
     }
 
-    // 4. Fallback: datos mock
+    // 5. Fallback: datos mock
     console.warn('[API tareas] Scraper no retornó datos, usando mock data');
-    return NextResponse.json({
+    const res = NextResponse.json({
       success: true,
       data: MOCK_ASSIGNMENTS,
       source: 'mock',
       warning: 'Usando datos de ejemplo. Exporta tu sesión de Brightspace para obtener datos reales.',
     });
+    res.headers.set('X-Data-Source', 'mock');
+    return res;
   } catch (err) {
     console.error('[API tareas] Error:', err);
-    return NextResponse.json(
+    const res = NextResponse.json(
       {
         success: false,
         error: 'Error al obtener tareas',
@@ -121,5 +141,7 @@ export async function GET(): Promise<NextResponse> {
       },
       { status: 500 }
     );
+    res.headers.set('X-Data-Source', 'mock');
+    return res;
   }
 }

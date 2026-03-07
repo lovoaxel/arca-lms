@@ -7,6 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import { getCache, setCache, CACHE_TTL, CACHE_KEYS } from '@/lib/cache/cache';
+import { hasValidSession } from '@/lib/scraper/session';
 import { withPage } from '@/lib/scraper/scraper';
 import { scrapeCourses } from '@/lib/scraper/parsers/courses';
 import type { Course } from '@/types';
@@ -53,39 +54,58 @@ export async function GET(): Promise<NextResponse> {
     // 1. Verificar caché
     const cached = getCache<Course[]>(CACHE_KEYS.cursos, CACHE_TTL.CURSOS);
     if (cached) {
-      return NextResponse.json({
+      const res = NextResponse.json({
         success: true,
         data: cached,
         source: 'cache',
       });
+      res.headers.set('X-Data-Source', 'real');
+      return res;
     }
 
-    // 2. Scraping con Playwright
+    // 2. Verificar si hay sesión válida antes de lanzar Playwright
+    if (!hasValidSession()) {
+      console.warn('[API cursos] No hay sesión válida, usando mock data');
+      const res = NextResponse.json({
+        success: true,
+        data: MOCK_COURSES,
+        source: 'mock',
+        warning: 'No hay sesión de Brightspace. Exporta tu sesión para obtener datos reales.',
+      });
+      res.headers.set('X-Data-Source', 'mock');
+      return res;
+    }
+
+    // 3. Scraping con Playwright
     const courses = await withPage(async (page) => {
       return await scrapeCourses(page);
     });
 
-    // 3. Si el scraper retornó datos, guardar en caché
+    // 4. Si el scraper retornó datos, guardar en caché
     if (courses && courses.length > 0) {
       setCache(CACHE_KEYS.cursos, courses, CACHE_TTL.CURSOS);
-      return NextResponse.json({
+      const res = NextResponse.json({
         success: true,
         data: courses,
         source: 'scraper',
       });
+      res.headers.set('X-Data-Source', 'real');
+      return res;
     }
 
-    // 4. Fallback: datos mock
+    // 5. Fallback: datos mock
     console.warn('[API cursos] Scraper no retornó datos, usando mock data');
-    return NextResponse.json({
+    const res = NextResponse.json({
       success: true,
       data: MOCK_COURSES,
       source: 'mock',
       warning: 'Usando datos de ejemplo. Exporta tu sesión de Brightspace para obtener datos reales.',
     });
+    res.headers.set('X-Data-Source', 'mock');
+    return res;
   } catch (err) {
     console.error('[API cursos] Error:', err);
-    return NextResponse.json(
+    const res = NextResponse.json(
       {
         success: false,
         error: 'Error al obtener cursos',
@@ -94,5 +114,7 @@ export async function GET(): Promise<NextResponse> {
       },
       { status: 500 }
     );
+    res.headers.set('X-Data-Source', 'mock');
+    return res;
   }
 }
