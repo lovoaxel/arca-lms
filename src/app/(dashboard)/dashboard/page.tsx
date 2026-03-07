@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   Zap,
   BarChart3,
+  Activity,
 } from "lucide-react";
 import Link from "next/link";
 import type { Assignment, CalendarEvent } from "@/types";
@@ -193,6 +194,158 @@ const PRIORITY_LABELS: Record<Assignment["priority"], string> = {
   medium: "Media",
   low:    "Baja",
 };
+
+// ─── Weekly Load Map ───────────────────────────────────────────
+interface WeekBucket {
+  label: string;
+  sublabel: string;
+  total: number;
+  urgentCount: number;
+  highCount: number;
+  isCurrentWeek: boolean;
+}
+
+function buildWeeklyLoad(assignments: Assignment[]): WeekBucket[] {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return Array.from({ length: 4 }, (_, i) => {
+    const start = new Date(today);
+    start.setDate(today.getDate() + i * 7);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+
+    const weekAssignments = assignments.filter((a) => {
+      const due = new Date(a.dueDate);
+      return due >= start && due <= end && a.status !== "submitted";
+    });
+
+    const fmt = (d: Date) =>
+      d.toLocaleDateString("es-MX", { day: "numeric", month: "short" });
+
+    return {
+      label:
+        i === 0
+          ? "Esta semana"
+          : i === 1
+          ? "Próxima semana"
+          : `En ${i} semanas`,
+      sublabel: `${fmt(start)} – ${fmt(end)}`,
+      total: weekAssignments.length,
+      urgentCount: weekAssignments.filter((a) => a.priority === "urgent").length,
+      highCount: weekAssignments.filter((a) => a.priority === "high").length,
+      isCurrentWeek: i === 0,
+    };
+  });
+}
+
+function WeeklyLoadMap({ assignments }: { assignments: Assignment[] }) {
+  const weeks = buildWeeklyLoad(assignments);
+  const maxTotal = Math.max(...weeks.map((w) => w.total), 1);
+
+  const getLoadStyle = (total: number, max: number) => {
+    if (total === 0)
+      return {
+        bar: "bg-slate-700",
+        badge: "text-slate-600",
+        card: "border-slate-800",
+        label: "Libre",
+        labelColor: "text-slate-600",
+      };
+    const ratio = total / max;
+    if (ratio > 0.6)
+      return {
+        bar: "bg-red-500",
+        badge: "text-red-400",
+        card: "border-red-500/20 bg-red-500/5",
+        label: "Alta",
+        labelColor: "text-red-400",
+      };
+    if (ratio > 0.3)
+      return {
+        bar: "bg-yellow-500",
+        badge: "text-yellow-400",
+        card: "border-yellow-500/20 bg-yellow-500/5",
+        label: "Media",
+        labelColor: "text-yellow-400",
+      };
+    return {
+      bar: "bg-green-500",
+      badge: "text-green-400",
+      card: "border-green-500/20 bg-green-500/5",
+      label: "Baja",
+      labelColor: "text-green-400",
+    };
+  };
+
+  return (
+    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+        <div className="flex items-center gap-2">
+          <Activity className="w-4 h-4 text-orange-400" />
+          <h3 className="text-sm font-semibold text-slate-200">Carga académica</h3>
+          <span className="text-xs text-slate-600">— próximas 4 semanas</span>
+        </div>
+      </div>
+
+      {/* Week columns */}
+      <div className="p-5 grid grid-cols-4 gap-3">
+        {weeks.map((week, i) => {
+          const style = getLoadStyle(week.total, maxTotal);
+          const barHeight = week.total === 0 ? 4 : Math.max(Math.round((week.total / maxTotal) * 80), 8);
+
+          return (
+            <div
+              key={i}
+              className={`border rounded-xl p-3.5 flex flex-col gap-2 transition-all ${style.card} ${week.isCurrentWeek ? "ring-1 ring-orange-500/30" : ""}`}
+            >
+              {/* Week label */}
+              <div>
+                <p className={`text-[10px] font-bold uppercase tracking-wider ${week.isCurrentWeek ? "text-orange-400" : "text-slate-500"}`}>
+                  {week.label}
+                </p>
+                <p className="text-[9px] text-slate-700 leading-tight mt-0.5">{week.sublabel}</p>
+              </div>
+
+              {/* Bar */}
+              <div className="flex items-end justify-center h-[80px]">
+                <div
+                  className={`w-full rounded-t-md ${style.bar} transition-all duration-700`}
+                  style={{ height: `${barHeight}px` }}
+                />
+              </div>
+
+              {/* Stats */}
+              <div className="space-y-1">
+                <div className="flex items-baseline justify-between">
+                  <span className={`text-2xl font-black ${style.badge}`}>{week.total}</span>
+                  <span className={`text-[10px] font-semibold ${style.labelColor}`}>{style.label}</span>
+                </div>
+                <p className="text-[10px] text-slate-600">
+                  {week.total === 0
+                    ? "Sin entregas"
+                    : week.total === 1
+                    ? "1 entrega"
+                    : `${week.total} entregas`}
+                </p>
+                {week.urgentCount > 0 && (
+                  <p className="text-[10px] text-red-400 font-medium">{week.urgentCount} urgente{week.urgentCount > 1 ? "s" : ""}</p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="px-5 pb-3">
+        <p className="text-[10px] text-slate-700">
+          Basado en {assignments.filter((a) => a.status !== "submitted").length} tareas pendientes · Las barras son proporcionales entre sí
+        </p>
+      </div>
+    </div>
+  );
+}
 
 // ─── Stat Card ─────────────────────────────────────────────────
 function StatCard({

@@ -1,6 +1,7 @@
 "use client";
 
-import { BarChart3, AlertTriangle, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { useState } from "react";
+import { BarChart3, AlertTriangle, TrendingUp, TrendingDown, Minus, Calculator, ChevronRight } from "lucide-react";
 
 // ─── Types ─────────────────────────────────────────────────────
 interface CourseGrade {
@@ -117,6 +118,487 @@ function getGradeBarColor(grade: number): string {
 function calcOverallAverage(courses: CourseGrade[]): number {
   const total = courses.reduce((sum, c) => sum + c.currentGrade, 0);
   return total / courses.length;
+}
+
+// ─── Grade Target Calculator ───────────────────────────────────
+const TARGET_OPTIONS = [
+  { label: "Pasar",  value: 6.0, color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/30" },
+  { label: "Bien",   value: 7.0, color: "text-blue-400   bg-blue-500/10   border-blue-500/30"   },
+  { label: "Alto",   value: 8.0, color: "text-orange-400 bg-orange-500/10 border-orange-500/30" },
+  { label: "9.0",    value: 9.0, color: "text-green-400  bg-green-500/10  border-green-500/30"  },
+];
+
+function GradeTargetCalculator({ courses }: { courses: CourseGrade[] }) {
+  const [targets, setTargets] = useState<Record<string, number>>(
+    Object.fromEntries(courses.map((c) => [c.id, 7.0]))
+  );
+
+  return (
+    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-800">
+        <Calculator className="w-4 h-4 text-orange-400" />
+        <h3 className="text-sm font-semibold text-slate-200">Calculadora de nota mínima</h3>
+        <span className="text-xs text-slate-600 ml-1">— ¿Cuánto necesito para llegar a mi meta?</span>
+      </div>
+
+      {/* Rows */}
+      <div className="divide-y divide-slate-800/50">
+        {courses.map((course) => {
+          const target = targets[course.id];
+          const diff = target - course.currentGrade;
+          const alreadyReached = diff <= 0;
+          // Remaining weight: categories that are still 0 (not graded)
+          const remainingWeight = course.categories
+            .filter((cat) => cat.grade === 0)
+            .reduce((sum, cat) => sum + cat.weight, 0);
+          const gradedPoints = course.categories
+            .filter((cat) => cat.grade > 0)
+            .reduce((sum, cat) => sum + (cat.grade * cat.weight) / 100, 0);
+          // Minimum grade needed on remaining categories
+          const neededOnRemaining =
+            remainingWeight > 0
+              ? ((target - gradedPoints) / remainingWeight) * 100
+              : null;
+
+          return (
+            <div key={course.id} className="px-5 py-4">
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Course name */}
+                <div className="flex items-center gap-2 flex-1 min-w-[160px]">
+                  <div className={`w-1.5 h-8 rounded-full ${course.color} flex-shrink-0`} />
+                  <div>
+                    <p className="text-sm font-medium text-slate-200 leading-tight">{course.name}</p>
+                    <p className="text-xs text-slate-600 leading-tight">
+                      Actual:{" "}
+                      <span className={`font-semibold ${course.currentGrade < 6 ? "text-red-400" : course.currentGrade < 8 ? "text-yellow-400" : "text-green-400"}`}>
+                        {course.currentGrade.toFixed(1)}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Target buttons */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] text-slate-600 mr-0.5">Meta:</span>
+                  {TARGET_OPTIONS.map((opt) => {
+                    const reached = course.currentGrade >= opt.value;
+                    const selected = targets[course.id] === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        onClick={() => setTargets((prev) => ({ ...prev, [course.id]: opt.value }))}
+                        className={`text-[11px] font-semibold px-2 py-1 rounded border transition-all ${
+                          reached
+                            ? "text-green-400 bg-green-500/10 border-green-500/20 cursor-default"
+                            : selected
+                            ? opt.color
+                            : "text-slate-500 border-slate-700 hover:border-slate-600 hover:text-slate-400"
+                        }`}
+                      >
+                        {reached && selected ? "✓" : ""}{opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Result */}
+                <div className="min-w-[180px] text-right">
+                  {alreadyReached ? (
+                    <span className="text-xs font-semibold text-green-400">✓ Ya alcanzaste esta meta</span>
+                  ) : neededOnRemaining === null ? (
+                    <span className="text-xs text-red-400 font-semibold">Sin actividades pendientes detectadas</span>
+                  ) : neededOnRemaining > 10 ? (
+                    <span className="text-xs text-red-400 font-semibold">⚠ Meta muy difícil de alcanzar</span>
+                  ) : neededOnRemaining < 0 ? (
+                    <span className="text-xs text-green-400 font-semibold">✓ Ya tienes garantizado ese promedio</span>
+                  ) : (
+                    <span className="text-xs text-slate-300">
+                      Necesitas{" "}
+                      <span className={`font-bold text-sm ${neededOnRemaining >= 9 ? "text-orange-400" : "text-blue-400"}`}>
+                        {neededOnRemaining.toFixed(1)}/10
+                      </span>
+                      {" "}en actividades restantes
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Remaining categories breakdown */}
+              {!alreadyReached && neededOnRemaining !== null && neededOnRemaining <= 10 && (
+                <div className="mt-2.5 pl-3.5 flex flex-wrap gap-2">
+                  {course.categories
+                    .filter((cat) => cat.grade === 0)
+                    .map((cat) => (
+                      <span key={cat.name} className="text-[10px] text-slate-600 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+                        {cat.name} ({cat.weight}% del curso)
+                      </span>
+                    ))}
+                  {course.categories.filter((c) => c.grade === 0).length === 0 && (
+                    <span className="text-[10px] text-slate-700 italic">Todas las categorías ya tienen calificación</span>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="px-5 py-3 bg-slate-800/30 border-t border-slate-800/60">
+        <p className="text-[10px] text-slate-700">
+          <ChevronRight className="inline w-3 h-3 mb-0.5" /> El cálculo usa el peso de categorías sin calificar. Activa el scraper para datos reales.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Calculadora de Promedio Ponderado ────────────────────────
+interface MateriaPromedio {
+  id: string;
+  name: string;
+  color: string;
+  creditos: number;
+  calificacion: number;
+}
+
+const MATERIAS_INICIALES: MateriaPromedio[] = [
+  { id: "m1", name: "Precálculo",                        color: "bg-purple-500", creditos: 6, calificacion: 0   },
+  { id: "m2", name: "Sistemas Operativos",               color: "bg-cyan-500",   creditos: 6, calificacion: 8.4 },
+  { id: "m3", name: "Bases de Datos",                    color: "bg-blue-500",   creditos: 6, calificacion: 8.7 },
+  { id: "m4", name: "Habilidades para el Emprendimiento",color: "bg-green-500",  creditos: 4, calificacion: 4.2 },
+  { id: "m5", name: "Equipo Representativo Deportivo",   color: "bg-yellow-500", creditos: 2, calificacion: 9.1 },
+];
+
+function calcPromedioPonderado(materias: MateriaPromedio[]): number {
+  const totalCreditos = materias.reduce((s, m) => s + m.creditos, 0);
+  if (totalCreditos === 0) return 0;
+  const suma = materias.reduce((s, m) => s + m.calificacion * m.creditos, 0);
+  return suma / totalCreditos;
+}
+
+function trafficLightClasses(promedio: number): { ring: string; bg: string; text: string; label: string } {
+  if (promedio >= 8) return { ring: "ring-green-500/40", bg: "bg-green-500",  text: "text-green-400", label: "Excelente" };
+  if (promedio >= 6) return { ring: "ring-yellow-500/40", bg: "bg-yellow-500", text: "text-yellow-400", label: "Regular" };
+  return               { ring: "ring-red-500/40",    bg: "bg-red-500",    text: "text-red-400",    label: "En riesgo" };
+}
+
+function CalculadoraPromedio() {
+  const [materias, setMaterias] = useState<MateriaPromedio[]>(MATERIAS_INICIALES);
+
+  const handleGradeChange = (id: string, value: string) => {
+    const num = value === "" ? 0 : parseFloat(value);
+    if (isNaN(num)) return;
+    const clamped = Math.min(Math.max(num, 0), 10);
+    setMaterias((prev) => prev.map((m) => (m.id === id ? { ...m, calificacion: clamped } : m)));
+  };
+
+  const handleCreditosChange = (id: string, value: string) => {
+    const num = value === "" ? 0 : parseInt(value, 10);
+    if (isNaN(num)) return;
+    const clamped = Math.min(Math.max(num, 0), 20);
+    setMaterias((prev) => prev.map((m) => (m.id === id ? { ...m, creditos: clamped } : m)));
+  };
+
+  const promedio = calcPromedioPonderado(materias);
+  const tl = trafficLightClasses(promedio);
+  const totalCreditos = materias.reduce((s, m) => s + m.creditos, 0);
+
+  return (
+    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-800">
+        <Calculator className="w-4 h-4 text-orange-400" />
+        <h3 className="text-sm font-semibold text-slate-200">Calculadora de Promedio Ponderado</h3>
+        <span className="text-xs text-slate-600 ml-1">— Ajusta calificaciones esperadas y créditos</span>
+      </div>
+
+      <div className="p-5 space-y-4">
+        {/* Table header */}
+        <div className="grid grid-cols-[1fr_80px_100px_40px] gap-3 text-[10px] uppercase tracking-wider text-slate-600 font-semibold px-1">
+          <span>Materia</span>
+          <span className="text-center">Créditos</span>
+          <span className="text-center">Calificación</span>
+          <span />
+        </div>
+
+        {/* Rows */}
+        <div className="space-y-2">
+          {materias.map((m) => {
+            const rowTl = trafficLightClasses(m.calificacion);
+            return (
+              <div
+                key={m.id}
+                className="grid grid-cols-[1fr_80px_100px_40px] gap-3 items-center bg-slate-800/30 rounded-lg px-3 py-2.5 border border-slate-800 hover:border-slate-700 transition-colors"
+              >
+                {/* Name */}
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className={`w-1.5 h-6 rounded-full ${m.color} flex-shrink-0`} />
+                  <span className="text-sm text-slate-300 truncate">{m.name}</span>
+                </div>
+
+                {/* Creditos */}
+                <input
+                  type="number"
+                  min={0}
+                  max={20}
+                  value={m.creditos}
+                  onChange={(e) => handleCreditosChange(m.id, e.target.value)}
+                  className="w-full text-center text-sm font-semibold text-slate-200 bg-slate-800 border border-slate-700 rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+
+                {/* Calificacion */}
+                <input
+                  type="number"
+                  min={0}
+                  max={10}
+                  step={0.1}
+                  value={m.calificacion}
+                  onChange={(e) => handleGradeChange(m.id, e.target.value)}
+                  className={`w-full text-center text-sm font-bold bg-slate-800 border rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+                    m.calificacion >= 8
+                      ? "text-green-400 border-green-500/30"
+                      : m.calificacion >= 6
+                      ? "text-yellow-400 border-yellow-500/30"
+                      : "text-red-400 border-red-500/30"
+                  }`}
+                />
+
+                {/* Traffic light dot */}
+                <div className="flex justify-center">
+                  <div className={`w-3 h-3 rounded-full ${rowTl.bg} ring-2 ${rowTl.ring}`} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Result */}
+        <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 p-4 rounded-xl border ${
+          promedio >= 8
+            ? "bg-green-500/5 border-green-500/20"
+            : promedio >= 6
+            ? "bg-yellow-500/5 border-yellow-500/20"
+            : "bg-red-500/5 border-red-500/20"
+        }`}>
+          <div className="flex items-center gap-4">
+            {/* Traffic light */}
+            <div className="flex flex-col items-center gap-1.5 p-2 bg-slate-900 rounded-lg border border-slate-800">
+              <div className={`w-4 h-4 rounded-full ${promedio < 6 ? "bg-red-500 ring-2 ring-red-500/40" : "bg-red-500/20"}`} />
+              <div className={`w-4 h-4 rounded-full ${promedio >= 6 && promedio < 8 ? "bg-yellow-500 ring-2 ring-yellow-500/40" : "bg-yellow-500/20"}`} />
+              <div className={`w-4 h-4 rounded-full ${promedio >= 8 ? "bg-green-500 ring-2 ring-green-500/40" : "bg-green-500/20"}`} />
+            </div>
+
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Promedio Ponderado</p>
+              <p className={`text-4xl font-black ${tl.text}`}>{promedio.toFixed(2)}</p>
+              <p className="text-xs text-slate-600">{totalCreditos} créditos totales</p>
+            </div>
+          </div>
+
+          <div className="text-center sm:text-right">
+            <span className={`inline-block text-sm font-bold px-3 py-1 rounded-full ${
+              promedio >= 8
+                ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                : promedio >= 6
+                ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
+                : "bg-red-500/10 text-red-400 border border-red-500/20"
+            }`}>
+              {tl.label}
+            </span>
+            <p className="text-[10px] text-slate-600 mt-1">
+              {promedio >= 8 ? "Sigue así, vas excelente" : promedio >= 6 ? "Puedes mejorar en algunas materias" : "Necesitas subir tus calificaciones"}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-5 py-3 bg-slate-800/30 border-t border-slate-800/60">
+        <p className="text-[10px] text-slate-700">
+          <ChevronRight className="inline w-3 h-3 mb-0.5" /> Ajusta las calificaciones esperadas para simular tu promedio final. Los créditos son editables.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Calculadora de Promedio (Pesos %) ────────────────────────
+interface MateriaPeso {
+  id: string;
+  name: string;
+  color: string;
+  peso: number; // porcentaje del total (deben sumar 100)
+  calificacionEsperada: number; // 0-100
+}
+
+const MATERIAS_PESO_INICIAL: MateriaPeso[] = [
+  { id: "wp1", name: "Precálculo",                         color: "bg-purple-500", peso: 25, calificacionEsperada: 0   },
+  { id: "wp2", name: "Sistemas Operativos",                color: "bg-cyan-500",   peso: 25, calificacionEsperada: 84  },
+  { id: "wp3", name: "Bases de Datos",                     color: "bg-blue-500",   peso: 25, calificacionEsperada: 87  },
+  { id: "wp4", name: "Habilidades para el Emprendimiento", color: "bg-green-500",  peso: 15, calificacionEsperada: 42  },
+  { id: "wp5", name: "Equipo Representativo Deportivo",    color: "bg-yellow-500", peso: 10, calificacionEsperada: 91  },
+];
+
+function calcPromedioPesos(materias: MateriaPeso[]): number {
+  const totalPeso = materias.reduce((s, m) => s + m.peso, 0);
+  if (totalPeso === 0) return 0;
+  return materias.reduce((s, m) => s + (m.calificacionEsperada * m.peso) / totalPeso, 0);
+}
+
+function semaforoClasses(promedio: number): { ring: string; bg: string; text: string; label: string } {
+  if (promedio >= 90) return { ring: "ring-green-500/40",  bg: "bg-green-500",  text: "text-green-400",  label: "Excelente" };
+  if (promedio >= 70) return { ring: "ring-yellow-500/40", bg: "bg-yellow-500", text: "text-yellow-400", label: "Regular" };
+  return                      { ring: "ring-red-500/40",    bg: "bg-red-500",    text: "text-red-400",    label: "En riesgo" };
+}
+
+function CalculadoraPromedioPesos() {
+  const [materias, setMaterias] = useState<MateriaPeso[]>(MATERIAS_PESO_INICIAL);
+
+  const handleGradeChange = (id: string, value: string): void => {
+    const num = value === "" ? 0 : parseFloat(value);
+    if (isNaN(num)) return;
+    const clamped = Math.min(Math.max(num, 0), 100);
+    setMaterias((prev) => prev.map((m) => (m.id === id ? { ...m, calificacionEsperada: clamped } : m)));
+  };
+
+  const handlePesoChange = (id: string, value: string): void => {
+    const num = value === "" ? 0 : parseInt(value, 10);
+    if (isNaN(num)) return;
+    const clamped = Math.min(Math.max(num, 0), 100);
+    setMaterias((prev) => prev.map((m) => (m.id === id ? { ...m, peso: clamped } : m)));
+  };
+
+  const promedio = calcPromedioPesos(materias);
+  const sem = semaforoClasses(promedio);
+  const totalPeso = materias.reduce((s, m) => s + m.peso, 0);
+  const pesosValidos = totalPeso === 100;
+
+  return (
+    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-800">
+        <Calculator className="w-4 h-4 text-emerald-400" />
+        <h3 className="text-sm font-semibold text-slate-200">Calculadora de Promedio</h3>
+        <span className="text-xs text-slate-600 ml-1">— Pesos porcentuales (deben sumar 100%)</span>
+      </div>
+
+      <div className="p-5 space-y-4">
+        {/* Table header */}
+        <div className="grid grid-cols-[1fr_90px_110px_44px] gap-3 text-[10px] uppercase tracking-wider text-slate-600 font-semibold px-1">
+          <span>Materia</span>
+          <span className="text-center">Peso (%)</span>
+          <span className="text-center">Calificación</span>
+          <span className="text-center">Estado</span>
+        </div>
+
+        {/* Rows */}
+        <div className="space-y-2">
+          {materias.map((m) => {
+            const rowSem = semaforoClasses(m.calificacionEsperada);
+            return (
+              <div
+                key={m.id}
+                className="grid grid-cols-[1fr_90px_110px_44px] gap-3 items-center bg-slate-800/30 rounded-lg px-3 py-2.5 border border-slate-800 hover:border-slate-700 transition-colors"
+              >
+                {/* Name */}
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className={`w-1.5 h-6 rounded-full ${m.color} flex-shrink-0`} />
+                  <span className="text-sm text-slate-300 truncate">{m.name}</span>
+                </div>
+
+                {/* Peso */}
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={m.peso}
+                  onChange={(e) => handlePesoChange(m.id, e.target.value)}
+                  className="w-full text-center text-sm font-semibold text-slate-200 bg-slate-800 border border-slate-700 rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+
+                {/* Calificacion esperada (0-100) */}
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  step={1}
+                  value={m.calificacionEsperada}
+                  onChange={(e) => handleGradeChange(m.id, e.target.value)}
+                  className={`w-full text-center text-sm font-bold bg-slate-800 border rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+                    m.calificacionEsperada >= 90
+                      ? "text-green-400 border-green-500/30"
+                      : m.calificacionEsperada >= 70
+                      ? "text-yellow-400 border-yellow-500/30"
+                      : "text-red-400 border-red-500/30"
+                  }`}
+                />
+
+                {/* Traffic light dot */}
+                <div className="flex justify-center">
+                  <div className={`w-3 h-3 rounded-full ${rowSem.bg} ring-2 ${rowSem.ring}`} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Peso total indicator */}
+        <div className={`flex items-center justify-between px-3 py-2 rounded-lg border text-xs font-semibold ${
+          pesosValidos
+            ? "bg-green-500/5 border-green-500/20 text-green-400"
+            : "bg-red-500/5 border-red-500/20 text-red-400"
+        }`}>
+          <span>Total de pesos: {totalPeso}%</span>
+          <span>{pesosValidos ? "OK - Los pesos suman 100%" : `Faltan ${100 - totalPeso}% para completar`}</span>
+        </div>
+
+        {/* Result */}
+        <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 p-4 rounded-xl border ${
+          promedio >= 90
+            ? "bg-green-500/5 border-green-500/20"
+            : promedio >= 70
+            ? "bg-yellow-500/5 border-yellow-500/20"
+            : "bg-red-500/5 border-red-500/20"
+        }`}>
+          <div className="flex items-center gap-4">
+            {/* Semaforo visual */}
+            <div className="flex flex-col items-center gap-1.5 p-2 bg-slate-900 rounded-lg border border-slate-800">
+              <div className={`w-4 h-4 rounded-full ${promedio < 70 ? "bg-red-500 ring-2 ring-red-500/40" : "bg-red-500/20"}`} />
+              <div className={`w-4 h-4 rounded-full ${promedio >= 70 && promedio < 90 ? "bg-yellow-500 ring-2 ring-yellow-500/40" : "bg-yellow-500/20"}`} />
+              <div className={`w-4 h-4 rounded-full ${promedio >= 90 ? "bg-green-500 ring-2 ring-green-500/40" : "bg-green-500/20"}`} />
+            </div>
+
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Promedio Ponderado</p>
+              <p className={`text-4xl font-black ${sem.text}`}>{promedio.toFixed(2)}</p>
+              <p className="text-xs text-slate-600">Escala 0–100 · {totalPeso}% asignado</p>
+            </div>
+          </div>
+
+          <div className="text-center sm:text-right">
+            <span className={`inline-block text-sm font-bold px-3 py-1 rounded-full ${
+              promedio >= 90
+                ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                : promedio >= 70
+                ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
+                : "bg-red-500/10 text-red-400 border border-red-500/20"
+            }`}>
+              {sem.label}
+            </span>
+            <p className="text-[10px] text-slate-600 mt-1">
+              {promedio >= 90 ? "Excelente desempeno, sigue asi" : promedio >= 70 ? "Puedes mejorar en algunas materias" : "Necesitas subir tus calificaciones urgentemente"}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-5 py-3 bg-slate-800/30 border-t border-slate-800/60">
+        <p className="text-[10px] text-slate-700">
+          <ChevronRight className="inline w-3 h-3 mb-0.5" /> Ajusta los pesos (%) y calificaciones esperadas (0-100) para simular tu promedio. Los pesos deben sumar 100%.
+        </p>
+      </div>
+    </div>
+  );
 }
 
 // ─── Grade Bar ─────────────────────────────────────────────────
@@ -336,12 +818,18 @@ export default function CalificacionesPage() {
         </div>
       )}
 
+      {/* Grade Target Calculator */}
+      <GradeTargetCalculator courses={COURSES} />
+
       {/* Course cards grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {COURSES.map((course) => (
           <CourseCard key={course.id} course={course} />
         ))}
       </div>
+
+      {/* Calculadora de Promedio Ponderado */}
+      <CalculadoraPromedio />
     </div>
   );
 }

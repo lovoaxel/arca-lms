@@ -16,7 +16,8 @@ import {
   X,
   ChevronRight,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 // ─── Tipos de navegación ───────────────────────────────────────
 interface NavItem {
@@ -139,6 +140,232 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
   );
 }
 
+// ─── Datos mock para búsqueda global ─────────────────────────
+interface SearchResult {
+  id: string;
+  type: "tarea" | "curso";
+  title: string;
+  subtitle: string;
+}
+
+const SEARCH_DATA: SearchResult[] = [
+  { id: "t1", type: "tarea", title: "Ensayo de Ética Profesional",         subtitle: "Ética — Entrega: 12 mar" },
+  { id: "t2", type: "tarea", title: "Proyecto Final de Bases de Datos",    subtitle: "Bases de Datos — Entrega: 18 mar" },
+  { id: "t3", type: "tarea", title: "Reporte de Laboratorio #5",           subtitle: "Física II — Entrega: 14 mar" },
+  { id: "t4", type: "tarea", title: "Investigación sobre IA Generativa",   subtitle: "Inteligencia Artificial — Entrega: 20 mar" },
+  { id: "t5", type: "tarea", title: "Ejercicios de Cálculo Integral",      subtitle: "Cálculo III — Entrega: 10 mar" },
+  { id: "c1", type: "curso", title: "Bases de Datos Avanzadas",            subtitle: "Prof. García — Lun/Mié 10:00" },
+  { id: "c2", type: "curso", title: "Inteligencia Artificial",             subtitle: "Prof. Martínez — Mar/Jue 12:00" },
+  { id: "c3", type: "curso", title: "Ética Profesional",                   subtitle: "Prof. López — Vie 08:00" },
+  { id: "c4", type: "curso", title: "Cálculo III",                         subtitle: "Prof. Hernández — Lun/Mié 08:00" },
+  { id: "c5", type: "curso", title: "Física II",                           subtitle: "Prof. Ramírez — Mar/Jue 14:00" },
+];
+
+// ─── Iconos SVG inline para búsqueda ─────────────────────────
+function SearchIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx={11} cy={11} r={8} />
+      <line x1={21} y1={21} x2={16.65} y2={16.65} />
+    </svg>
+  );
+}
+
+function TaskIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x={3} y={3} width={18} height={18} rx={2} />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  );
+}
+
+function CourseIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+    </svg>
+  );
+}
+
+// ─── Global Search Component ──────────────────────────────────
+function GlobalSearch() {
+  const [query, setQuery] = useState<string>("");
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [activeIndex, setActiveIndex] = useState<number>(-1);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const results: SearchResult[] = query.trim().length > 0
+    ? SEARCH_DATA.filter(
+        (item) =>
+          item.title.toLowerCase().includes(query.toLowerCase()) ||
+          item.subtitle.toLowerCase().includes(query.toLowerCase())
+      )
+    : [];
+
+  const showDropdown = isOpen && query.trim().length > 0;
+
+  // Ctrl+K shortcut
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent): void {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        inputRef.current?.focus();
+        setIsOpen(true);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Click outside to close
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent): void {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+        setActiveIndex(-1);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleInputKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>): void => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+        setActiveIndex(-1);
+        inputRef.current?.blur();
+        return;
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setActiveIndex((prev) => (prev < results.length - 1 ? prev + 1 : 0));
+        return;
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActiveIndex((prev) => (prev > 0 ? prev - 1 : results.length - 1));
+        return;
+      }
+      if (e.key === "Enter" && activeIndex >= 0 && activeIndex < results.length) {
+        e.preventDefault();
+        // In a real app, navigate to the result
+        setIsOpen(false);
+        setQuery("");
+        setActiveIndex(-1);
+      }
+    },
+    [results.length, activeIndex]
+  );
+
+  return (
+    <div ref={containerRef} className="hidden md:block relative w-full max-w-sm mx-4">
+      {/* Input */}
+      <div className="relative">
+        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+        <input
+          ref={inputRef}
+          type="text"
+          value={query}
+          placeholder="Buscar tareas, cursos..."
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setQuery(e.target.value);
+            setIsOpen(true);
+            setActiveIndex(-1);
+          }}
+          onFocus={() => setIsOpen(true)}
+          onKeyDown={handleInputKeyDown}
+          className="w-full h-9 pl-9 pr-20 rounded-lg bg-slate-800/80 border border-slate-700/60 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/40 transition-colors"
+        />
+        <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-slate-700/60 border border-slate-600/50 text-[10px] font-medium text-slate-400 pointer-events-none select-none">
+          Ctrl+K
+        </kbd>
+      </div>
+
+      {/* Dropdown */}
+      {showDropdown && (
+        <div className="absolute top-full left-0 right-0 mt-1.5 rounded-lg bg-slate-900 border border-slate-700/70 shadow-xl shadow-black/30 overflow-hidden z-50">
+          {results.length === 0 ? (
+            <div className="px-4 py-6 text-center text-sm text-slate-500">
+              Sin resultados para &ldquo;{query}&rdquo;
+            </div>
+          ) : (
+            <ul className="py-1 max-h-72 overflow-y-auto">
+              {results.map((item, index) => (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    onMouseEnter={() => setActiveIndex(index)}
+                    onClick={() => {
+                      setIsOpen(false);
+                      setQuery("");
+                      setActiveIndex(-1);
+                    }}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors ${
+                      index === activeIndex
+                        ? "bg-slate-800 text-slate-100"
+                        : "text-slate-300 hover:bg-slate-800/60"
+                    }`}
+                  >
+                    {item.type === "tarea" ? (
+                      <TaskIcon className="w-4 h-4 flex-shrink-0 text-orange-400" />
+                    ) : (
+                      <CourseIcon className="w-4 h-4 flex-shrink-0 text-sky-400" />
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium truncate">{item.title}</p>
+                      <p className="text-[11px] text-slate-500 truncate">{item.subtitle}</p>
+                    </div>
+                    <span
+                      className={`flex-shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded ${
+                        item.type === "tarea"
+                          ? "bg-orange-500/15 text-orange-400"
+                          : "bg-sky-500/15 text-sky-400"
+                      }`}
+                    >
+                      {item.type === "tarea" ? "Tarea" : "Curso"}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Header Component ──────────────────────────────────────────
 function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const pathname = usePathname();
@@ -163,6 +390,9 @@ function Header({ onMenuClick }: { onMenuClick: () => void }) {
         </button>
         <h1 className="text-base font-semibold text-slate-100">{pageTitle}</h1>
       </div>
+
+      {/* Centro — búsqueda global */}
+      <GlobalSearch />
 
       {/* Derecha */}
       <div className="flex items-center gap-2">

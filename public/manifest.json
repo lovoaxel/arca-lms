@@ -1,0 +1,12 @@
+{
+  "name": "ARCA LMS",
+  "short_name": "ARCA",
+  "theme_color": "#f97316",
+  "background_color": "#0f172a",
+  "display": "standalone",
+  "start_url": "/",
+  "icons": [
+    { "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" },
+    { "src": "/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml" }
+  ]
+}
