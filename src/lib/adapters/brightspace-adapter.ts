@@ -1,29 +1,49 @@
-import type { Course, Assignment, Grade } from '@/types';
-import type { LMSAdapter } from './lms-adapter';
-import type { Tenant } from '@/types/tenant';
+import { LMSAdapter } from './lms-adapter'
 
 export class BrightspaceAdapter implements LMSAdapter {
-  private tenant: Tenant;
+  private baseUrl: string
 
-  constructor(tenant: Tenant) {
-    this.tenant = tenant;
+  constructor(baseUrl: string) {
+    this.baseUrl = baseUrl
   }
 
-  async getCourses(userId: string): Promise<Course[]> {
-    const res = await fetch(`/api/brightspace/cursos?userId=${userId}`);
-    const json = await res.json();
-    return json.data ?? [];
+  async getCourses(): Promise<any[]> {
+    try {
+      const { scrapeCourses } = await import('@/lib/scraper/parsers/courses')
+      // TODO: pass page from active browser session
+      return []
+    } catch {
+      return []
+    }
   }
 
-  async getAssignments(userId: string): Promise<Assignment[]> {
-    const res = await fetch(`/api/brightspace/tareas?userId=${userId}`);
-    const json = await res.json();
-    return json.data ?? [];
+  async getAssignments(courseId: string): Promise<any[]> {
+    try {
+      const { scrapeAssignments } = await import('@/lib/scraper/parsers/assignments')
+      // TODO: pass page from active browser session
+      return []
+    } catch {
+      return []
+    }
   }
 
-  async getGrades(userId: string): Promise<Grade[]> {
-    const res = await fetch(`/api/brightspace/calificaciones?userId=${userId}`);
-    const json = await res.json();
-    return json.data ?? [];
+  async getGrades(courseId: string): Promise<any[]> {
+    try {
+      const { scrapeGrades } = await import('@/lib/scraper/parsers/grades')
+      // TODO: pass page from active browser session
+      return []
+    } catch {
+      return []
+    }
+  }
+
+  async checkAuth(): Promise<boolean> {
+    try {
+      const { checkAuth } = await import('@/lib/scraper/scraper')
+      // TODO: pass page from active browser session
+      return false
+    } catch {
+      return false
+    }
   }
 }
