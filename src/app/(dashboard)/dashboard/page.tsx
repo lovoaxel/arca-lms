@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import {
   ClipboardList,
   Clock,
@@ -12,6 +15,10 @@ import {
   Zap,
   BarChart3,
   Activity,
+  Target,
+  GraduationCap,
+  Trophy,
+  Info,
 } from "lucide-react";
 import Link from "next/link";
 import type { Assignment, CalendarEvent } from "@/types";
@@ -128,11 +135,45 @@ const LOW_GRADE_COURSES = [
 
 // ─── Helpers ───────────────────────────────────────────────────
 
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) return "Buen día";
+function getGreeting(hour: number): string {
+  if (hour >= 6 && hour < 12) return "Buenos días";
   if (hour >= 12 && hour < 19) return "Buenas tardes";
   return "Buenas noches";
+}
+
+// ─── Semester Progress ──────────────────────────────────────────
+const SEMESTER_START = new Date("2026-01-20T00:00:00");
+const SEMESTER_END = new Date("2026-05-31T23:59:59");
+
+function getSemesterProgress(): { percentage: number; daysLeft: number; totalDays: number; daysPassed: number } {
+  const now = new Date();
+  const totalMs = SEMESTER_END.getTime() - SEMESTER_START.getTime();
+  const elapsedMs = now.getTime() - SEMESTER_START.getTime();
+  const totalDays = Math.ceil(totalMs / (1000 * 60 * 60 * 24));
+  const daysPassed = Math.max(0, Math.ceil(elapsedMs / (1000 * 60 * 60 * 24)));
+  const daysLeft = Math.max(0, totalDays - daysPassed);
+  const percentage = Math.min(100, Math.max(0, (elapsedMs / totalMs) * 100));
+  return { percentage, daysLeft, totalDays, daysPassed };
+}
+
+// ─── Contextual Motivation ──────────────────────────────────────
+function getMotivationMessage(promedio: number): { message: string; type: "warning" | "success" | "neutral" } {
+  if (promedio < 7) {
+    return {
+      message: "Tu promedio está por debajo de 7. Es momento de enfocarte y buscar ayuda con tus profesores o compañeros. ¡Aún puedes mejorar!",
+      type: "warning",
+    };
+  }
+  if (promedio > 8) {
+    return {
+      message: "¡Excelente trabajo! Tu promedio es sobresaliente. Sigue así y mantén el ritmo.",
+      type: "success",
+    };
+  }
+  return {
+    message: "Vas por buen camino. Con un poco más de esfuerzo puedes alcanzar un promedio aún mejor.",
+    type: "neutral",
+  };
 }
 
 function formatDueDate(iso: string): { label: string; isUrgent: boolean } {
@@ -237,6 +278,102 @@ function buildWeeklyLoad(assignments: Assignment[]): WeekBucket[] {
       isCurrentWeek: i === 0,
     };
   });
+}
+
+// ─── Focus del Día ─────────────────────────────────────────────
+interface FocusItem {
+  title: string;
+  courseName: string;
+  courseColor: string;
+  dueDate: string;
+  type: "exam" | "assignment" | "event";
+  location?: string;
+  tip: string;
+}
+
+function getTodaysFocus(assignments: Assignment[], events: CalendarEvent[]): FocusItem | null {
+  const now = new Date();
+
+  // First: any exam today
+  const examToday = events.find((e) => {
+    return e.type === "exam" && e.date === now.toISOString().split("T")[0];
+  });
+  if (examToday) {
+    return {
+      title: examToday.title,
+      courseName: examToday.courseName ?? "Curso",
+      courseColor: examToday.courseColor ?? "bg-slate-500",
+      dueDate: examToday.startTime ?? "Hoy",
+      type: "exam",
+      location: examToday.location,
+      tip: "Revisa tus apuntes, descansa bien y llega 10 min antes.",
+    };
+  }
+
+  // Second: most urgent assignment
+  const pending = assignments
+    .filter((a) => a.status !== "submitted")
+    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+
+  if (pending.length === 0) return null;
+  const top = pending[0];
+
+  const diffH = Math.floor((new Date(top.dueDate).getTime() - now.getTime()) / (1000 * 60 * 60));
+  const tipMap: Record<string, string> = {
+    urgent: `Vence en menos de 24h. Prioridad máxima — empieza ahora.`,
+    high: `Entrega próxima. Planifica al menos 2h hoy para avanzar.`,
+    medium: `Tienes algo de tiempo, pero empieza hoy para evitar la prisa.`,
+    low: `Sin presión inmediata, pero un avance temprano siempre ayuda.`,
+  };
+
+  return {
+    title: top.title,
+    courseName: top.courseName,
+    courseColor: top.courseColor ?? "bg-slate-500",
+    dueDate: diffH <= 0 ? "Vencida" : diffH < 24 ? `Hoy · ${new Date(top.dueDate).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })}` : `En ${Math.floor(diffH / 24)} día${Math.floor(diffH / 24) !== 1 ? "s" : ""}`,
+    type: "assignment",
+    tip: tipMap[top.priority] ?? "Trabaja con foco y sin distracciones.",
+  };
+}
+
+function FocusDelDia({ assignments, events }: { assignments: Assignment[]; events: CalendarEvent[] }) {
+  const focus = getTodaysFocus(assignments, events);
+  if (!focus) return null;
+
+  const isExam = focus.type === "exam";
+
+  return (
+    <div className={`rounded-xl border p-4 ${isExam ? "bg-red-500/5 border-red-500/25" : "bg-orange-500/5 border-orange-500/20"}`}>
+      <div className="flex items-center gap-2 mb-3">
+        <Target className={`w-4 h-4 ${isExam ? "text-red-400" : "text-orange-400"}`} />
+        <h3 className={`text-sm font-semibold ${isExam ? "text-red-400" : "text-orange-400"}`}>
+          Focus del Día
+        </h3>
+        <span className="text-xs text-slate-600 ml-auto">{isExam ? "📋 Examen" : "📌 Tarea prioritaria"}</span>
+      </div>
+
+      <div className="flex items-start gap-3">
+        <div className={`w-1 h-full min-h-[48px] rounded-full ${focus.courseColor} flex-shrink-0`} />
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-slate-100 leading-tight">{focus.title}</p>
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
+            <span className="text-xs text-slate-500">{focus.courseName}</span>
+            {focus.location && (
+              <>
+                <span className="text-slate-700">·</span>
+                <span className="text-xs text-slate-600">{focus.location}</span>
+              </>
+            )}
+            <span className="text-slate-700">·</span>
+            <span className={`text-xs font-semibold ${isExam ? "text-red-400" : "text-orange-400"}`}>
+              {focus.dueDate}
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 mt-2 italic">{focus.tip}</p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function WeeklyLoadMap({ assignments }: { assignments: Assignment[] }) {
@@ -377,7 +514,16 @@ function StatCard({
 
 // ─── Page ──────────────────────────────────────────────────────
 export default function DashboardPage() {
-  const greeting = getGreeting();
+  const [currentHour, setCurrentHour] = useState<number>(() => new Date().getHours());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentHour(new Date().getHours());
+    }, 60_000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const greeting = getGreeting(currentHour);
 
   // Urgentes (próximas 48h)
   const urgent48h = MOCK_URGENT_ASSIGNMENTS.filter((a) => isWithin48h(a.dueDate));
@@ -391,6 +537,9 @@ export default function DashboardPage() {
     overallAverage: 6.1,
     activeCourses: 5,
   };
+
+  const semesterProgress = getSemesterProgress();
+  const motivation = getMotivationMessage(stats.overallAverage);
 
   return (
     <div className="space-y-8">
@@ -419,6 +568,81 @@ export default function DashboardPage() {
           </div>
         </div>
       </section>
+
+      {/* ── Progreso del Semestre ──────────────────────────── */}
+      <section className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <GraduationCap className="w-4 h-4 text-orange-400" />
+          <h3 className="text-sm font-semibold text-slate-200">Progreso del semestre</h3>
+          <span className="text-xs text-slate-600 ml-auto">
+            Ene 20 – May 31, 2026
+          </span>
+        </div>
+        <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-orange-500 to-orange-400 transition-all duration-700"
+            style={{ width: `${semesterProgress.percentage}%` }}
+          />
+        </div>
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-xs text-slate-500">
+            {semesterProgress.daysPassed} de {semesterProgress.totalDays} días transcurridos
+          </span>
+          <span className="text-sm font-bold text-orange-400">
+            {semesterProgress.percentage.toFixed(1)}%
+          </span>
+        </div>
+        <p className="text-xs text-slate-600 mt-1">
+          {semesterProgress.daysLeft > 0
+            ? `Faltan ${semesterProgress.daysLeft} días para terminar el semestre.`
+            : "El semestre ha finalizado."}
+        </p>
+      </section>
+
+      {/* ── Motivación contextual ─────────────────────────── */}
+      <section>
+        <div
+          className={`rounded-xl border p-4 flex items-start gap-3 ${
+            motivation.type === "warning"
+              ? "bg-red-500/5 border-red-500/25"
+              : motivation.type === "success"
+              ? "bg-green-500/5 border-green-500/25"
+              : "bg-blue-500/5 border-blue-500/25"
+          }`}
+        >
+          {motivation.type === "warning" ? (
+            <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+          ) : motivation.type === "success" ? (
+            <Trophy className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+          ) : (
+            <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+          )}
+          <div>
+            <p
+              className={`text-sm font-semibold ${
+                motivation.type === "warning"
+                  ? "text-red-400"
+                  : motivation.type === "success"
+                  ? "text-green-400"
+                  : "text-blue-400"
+              }`}
+            >
+              {motivation.type === "warning"
+                ? "Atención con tu promedio"
+                : motivation.type === "success"
+                ? "¡Felicidades!"
+                : "Sigue adelante"}
+            </p>
+            <p className="text-xs text-slate-400 mt-1">{motivation.message}</p>
+            <p className="text-xs text-slate-600 mt-1">
+              Promedio actual: <span className="font-semibold text-slate-300">{stats.overallAverage.toFixed(1)}</span>/10
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Focus del Día ───────────────────────────────────── */}
+      <FocusDelDia assignments={MOCK_URGENT_ASSIGNMENTS} events={MOCK_CALENDAR_EVENTS} />
 
       {/* ── Urgente Alert (48h) ─────────────────────────────── */}
       {urgent48h.length > 0 && (

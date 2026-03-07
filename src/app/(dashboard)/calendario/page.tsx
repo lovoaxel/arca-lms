@@ -1,6 +1,66 @@
 "use client";
 
-import { Calendar, Clock, BookOpen, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Calendar, Clock, BookOpen, AlertTriangle, CheckCircle2, Download } from "lucide-react";
+
+// ─── iCal Export ───────────────────────────────────────────────
+function formatICSDate(dateStr: string, timeStr?: string): string {
+  const d = dateStr.replace(/-/g, "");
+  if (!timeStr) return `${d}`;
+  const t = timeStr.replace(/:/g, "") + "00";
+  return `${d}T${t}`;
+}
+
+function generateICS(items: DeliveryItem[]): string {
+  const lines: string[] = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//ARCA LMS//Calendario Semestral//ES",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "X-WR-CALNAME:ARCA — Semestre 2026",
+    "X-WR-CALDESC:Entregas y eventos del semestre enero-junio 2026",
+    "X-WR-TIMEZONE:America/Mexico_City",
+  ];
+
+  for (const item of items) {
+    const dtstart = item.time
+      ? `DTSTART;TZID=America/Mexico_City:${formatICSDate(item.date, item.time)}`
+      : `DTSTART;VALUE=DATE:${item.date.replace(/-/g, "")}`;
+    const dtend = item.time
+      ? `DTEND;TZID=America/Mexico_City:${formatICSDate(item.date, item.time)}`
+      : `DTEND;VALUE=DATE:${item.date.replace(/-/g, "")}`;
+    const summary = `${item.title} — ${item.courseName}`;
+    const description = `Tipo: ${TYPE_LABELS[item.type]}\\nMateria: ${item.courseName}${item.location ? "\\nLugar: " + item.location : ""}`;
+
+    lines.push(
+      "BEGIN:VEVENT",
+      `UID:arca-${item.id}-2026@arca.lms`,
+      dtstart,
+      dtend,
+      `SUMMARY:${summary}`,
+      `DESCRIPTION:${description}`,
+      ...(item.location ? [`LOCATION:${item.location}`] : []),
+      "STATUS:CONFIRMED",
+      "END:VEVENT",
+    );
+  }
+
+  lines.push("END:VCALENDAR");
+  return lines.join("\r\n");
+}
+
+function downloadICS(items: DeliveryItem[]): void {
+  const content = generateICS(items);
+  const blob = new Blob([content], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "ARCA_Calendario_2026.ics";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 
 // ─── Mock data: fechas reales del semestre enero–junio 2026 ─────
 interface DeliveryItem {
@@ -213,8 +273,18 @@ export default function CalendarioPage() {
             Semestre enero–junio 2026 · {totalPending} próximas · {totalOverdue > 0 ? `${totalOverdue} vencidas` : "0 vencidas"}
           </p>
         </div>
-        <div className="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
-          <Calendar className="w-4 h-4 text-orange-400" />
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => downloadICS(DELIVERIES)}
+            title="Exportar a Google Calendar / Apple Calendar / Outlook"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs font-medium text-slate-300 hover:bg-slate-700 hover:text-slate-100 hover:border-orange-500/40 transition-all"
+          >
+            <Download className="w-3.5 h-3.5 text-orange-400" />
+            Exportar .ics
+          </button>
+          <div className="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+            <Calendar className="w-4 h-4 text-orange-400" />
+          </div>
         </div>
       </section>
 

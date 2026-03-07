@@ -601,6 +601,149 @@ function CalculadoraPromedioPesos() {
   );
 }
 
+// ─── Academic Risk Panel ────────────────────────────────────────
+interface RiskLevel {
+  label: string;
+  color: string;
+  bg: string;
+  border: string;
+  dot: string;
+  advice: string;
+}
+
+function getRisk(grade: number, trend: CourseGrade["trend"]): RiskLevel {
+  if (grade === 0 || grade < 6) {
+    return {
+      label: "Riesgo crítico",
+      color: "text-red-400",
+      bg: "bg-red-500/10",
+      border: "border-red-500/25",
+      dot: "bg-red-500",
+      advice: grade === 0
+        ? "Sin calificaciones — contacta al profesor urgente"
+        : "Por debajo del mínimo aprobatorio. Actúa de inmediato.",
+    };
+  }
+  if (grade < 7.5 && trend === "down") {
+    return {
+      label: "Riesgo moderado",
+      color: "text-orange-400",
+      bg: "bg-orange-500/10",
+      border: "border-orange-500/25",
+      dot: "bg-orange-500",
+      advice: "Calificación bajando. Revisa tu rendimiento antes del siguiente parcial.",
+    };
+  }
+  if (grade < 7.5) {
+    return {
+      label: "Atención",
+      color: "text-yellow-400",
+      bg: "bg-yellow-500/10",
+      border: "border-yellow-500/25",
+      dot: "bg-yellow-500",
+      advice: "Por encima del mínimo, pero con margen ajustado. Mantén el ritmo.",
+    };
+  }
+  return {
+    label: "Sin riesgo",
+    color: "text-green-400",
+    bg: "bg-green-500/10",
+    border: "border-green-500/25",
+    dot: "bg-green-500",
+    advice: "Buen desempeño. Sigue así para cerrar el semestre arriba.",
+  };
+}
+
+function AcademicRiskPanel({ courses }: { courses: CourseGrade[] }) {
+  const critical = courses.filter((c) => c.currentGrade < 6 || c.currentGrade === 0);
+  const moderate = courses.filter((c) => c.currentGrade >= 6 && c.currentGrade < 7.5 && c.trend === "down");
+  const attention = courses.filter((c) => c.currentGrade >= 6 && c.currentGrade < 7.5 && c.trend !== "down");
+  const safe = courses.filter((c) => c.currentGrade >= 7.5);
+
+  const overallRisk = critical.length > 0 ? "Crítico" : moderate.length > 0 ? "Moderado" : attention.length > 0 ? "Atención" : "Saludable";
+  const overallColor = critical.length > 0 ? "text-red-400" : moderate.length > 0 ? "text-orange-400" : attention.length > 0 ? "text-yellow-400" : "text-green-400";
+
+  return (
+    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 flex items-center justify-center">
+            <div className="relative w-3 h-3">
+              <div className="absolute inset-0 rounded-full bg-red-500/30 animate-ping" />
+              <div className={`absolute inset-0 rounded-full ${critical.length > 0 ? "bg-red-500" : moderate.length > 0 ? "bg-orange-500" : attention.length > 0 ? "bg-yellow-500" : "bg-green-500"}`} />
+            </div>
+          </div>
+          <h3 className="text-sm font-semibold text-slate-200">Panel de Riesgo Académico</h3>
+          <span className="text-xs text-slate-600 ml-1">— semáforo por materia</span>
+        </div>
+        <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
+          critical.length > 0 ? "bg-red-500/10 text-red-400 border-red-500/25" :
+          moderate.length > 0 ? "bg-orange-500/10 text-orange-400 border-orange-500/25" :
+          attention.length > 0 ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/25" :
+          "bg-green-500/10 text-green-400 border-green-500/25"
+        }`}>
+          {overallRisk}
+        </span>
+      </div>
+
+      {/* Summary row */}
+      <div className="grid grid-cols-4 divide-x divide-slate-800 border-b border-slate-800">
+        {[
+          { count: critical.length,  label: "Crítico",   color: "text-red-400",    bg: "bg-red-500" },
+          { count: moderate.length,  label: "Moderado",  color: "text-orange-400", bg: "bg-orange-500" },
+          { count: attention.length, label: "Atención",  color: "text-yellow-400", bg: "bg-yellow-500" },
+          { count: safe.length,      label: "Sin riesgo",color: "text-green-400",  bg: "bg-green-500" },
+        ].map(({ count, label, color, bg }) => (
+          <div key={label} className="flex flex-col items-center justify-center py-3 gap-1">
+            <div className={`w-2 h-2 rounded-full ${bg}`} />
+            <span className={`text-xl font-black ${color}`}>{count}</span>
+            <span className="text-[10px] text-slate-600 text-center leading-tight">{label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Per-course rows */}
+      <div className="divide-y divide-slate-800/50">
+        {courses.map((course) => {
+          const risk = getRisk(course.currentGrade, course.trend);
+          return (
+            <div key={course.id} className={`flex items-center gap-4 px-5 py-3.5 ${risk.bg} border-l-2 ${risk.border}`}>
+              {/* Dot */}
+              <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${risk.dot}`} />
+
+              {/* Course info */}
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <div className={`w-1 h-8 rounded-full ${course.color} flex-shrink-0`} />
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-slate-200 truncate">{course.name}</p>
+                  <p className="text-[10px] text-slate-500 truncate">{risk.advice}</p>
+                </div>
+              </div>
+
+              {/* Grade + risk label */}
+              <div className="flex items-center gap-3 flex-shrink-0">
+                <span className={`text-sm font-bold ${course.currentGrade < 6 ? "text-red-400" : course.currentGrade < 8 ? "text-yellow-400" : "text-green-400"}`}>
+                  {course.currentGrade.toFixed(1)}
+                </span>
+                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${risk.bg} ${risk.color} ${risk.border} hidden sm:inline`}>
+                  {risk.label}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="px-5 py-3 bg-slate-800/20 border-t border-slate-800/60">
+        <p className="text-[10px] text-slate-700">
+          Basado en calificaciones actuales y tendencia de cada materia. Datos en tiempo real cuando el scraper esté activo.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Grade Bar ─────────────────────────────────────────────────
 function GradeBar({ grade, maxGrade, color }: { grade: number; maxGrade: number; color?: string }) {
   const pct = Math.min((grade / maxGrade) * 100, 100);
@@ -817,6 +960,9 @@ export default function CalificacionesPage() {
           </div>
         </div>
       )}
+
+      {/* Academic Risk Panel */}
+      <AcademicRiskPanel courses={COURSES} />
 
       {/* Grade Target Calculator */}
       <GradeTargetCalculator courses={COURSES} />

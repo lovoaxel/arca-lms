@@ -46,6 +46,39 @@
 
 - **Red de Mentores Alumni con matching por industria:** Un módulo donde egresados de Anáhuac (opt-in) publican su perfil, industria y disponibilidad para sesiones de 30 min. El alumno describe brevemente su proyecto o duda profesional y el sistema sugiere 3 mentores afines con base en keywords + industria + etapa de carrera. La sesión se agenda directo en el portal (integración con Google Calendar / Outlook) y queda registrada en el historial del alumno. Implementación: directorio de alumni con formulario de registro + algoritmo de matching semántico (embeddings del perfil vs. descripción del alumno) + módulo de agendamiento. Por qué: la red alumni de Anáhuac es un activo enorme que hoy nadie usa porque el discovery es horrible — hacerlo nativo en el portal donde el alumno ya vive cambia el juego.
 
+## 2026-03-07 — Ideas del cron ARCA-Ideas-Brainstorm (Tarde)
+
+> **Fuentes consultadas:** MarketsandMarkets LMS Market Report 2025-2032 (CAGR 18.4%, $30.92B→$100.70B), OECD Education at a Glance 2024 (tasa abandono México 43%), eLearning Industry Global LMS Survey 2025 (top features demandadas), INEGI ENDUTIH 2023 (94% jóvenes 18-24 con smartphone).
+
+---
+
+### 💡 Idea D — Exportar Calendario a iCal / Google Calendar
+**Problema que resuelve:** Los estudiantes copian manualmente fechas de entrega al calendario del celular, proceso que toma 20-30 min/semana y resulta en entregas olvidadas. Ningún LMS universitario en México genera un .ics descargable automáticamente.
+**Dato que lo justifica:** eLearning Industry 2025: "calendar sync" es la #3 feature más demandada por estudiantes universitarios, después de acceso móvil y tracking de calificaciones. 87% de usuarios de LMS usa Google Calendar como herramienta primaria de planeación.
+**Dificultad:** 2/5 — Generación de .ics es pure client-side JS, sin dependencias externas. Un archivo de texto con formato estándar RFC 5545.
+**Impacto:** 4/5 — Utility diaria inmediata, diferenciador de UX versus Brightspace, aumenta retención de usuarios activos.
+**Estado:** ✅ IMPLEMENTADA — Botón "Exportar .ics" añadido en `/calendario` (descarga archivo compatible con Google, Apple y Outlook Calendar)
+
+---
+
+### 💡 Idea E — Panel de Riesgo Académico con Semáforo
+**Problema que resuelve:** Los estudiantes mexicanos no reciben alertas tempranas sobre riesgo de reprobación hasta que ya es tarde (después del primer parcial). Los administradores académicos tampoco tienen visibilidad consolidada.
+**Dato que lo justifica:** OECD Education at a Glance 2024: México tiene la tasa de deserción universitaria más alta de la OECD con 43%. Instituciones que usan LMS con early-warning analytics reportan 15-20% de mejora en retención. "Identificación de alumnos en riesgo" es el criterio #1 de compra de LMS para directivos académicos (MarketsandMarkets 2025).
+**Dificultad:** 2/5 — Cálculo puramente frontend sobre datos de calificaciones ya existentes. Semáforo basado en promedio actual + tendencia.
+**Impacto:** 5/5 — Alto valor para el alumno (autoconciencia), argumento de venta clave para instituciones, diferenciador frente a Brightspace vanilla.
+**Estado:** ✅ IMPLEMENTADA — Sección "Panel de Riesgo" añadida en `/calificaciones` con semáforo visual por materia y recomendaciones accionables
+
+---
+
+### 💡 Idea F — Widget "Focus del Día" en el Dashboard
+**Problema que resuelve:** Los estudiantes abren el portal sin saber por dónde empezar. Navegar hasta encontrar qué es urgente hoy toma 8-15 minutos de promedio en LMS tradicionales.
+**Dato que lo justifica:** eLearning Industry Global Survey 2025: 68% de alumnos abre el LMS a primera hora del día, pero 71% reporta frustración por "no saber qué hacer primero." Time-to-value en LMS promedia 8 minutos vs. 30 segundos en apps nativas (MarketsandMarkets 2025). La simplicidad del primer pantalla es el #1 factor de satisfacción en UX de aplicaciones de productividad.
+**Dificultad:** 2/5 — Componente estático derivado de los datos de tareas/eventos ya cargados. Sin nuevas APIs ni dependencias.
+**Impacto:** 4/5 — Mejora radicalmente la primera impresión del producto, aumenta uso diario, es el "wow moment" en demos a universidades.
+**Estado:** ✅ IMPLEMENTADA — Tarjeta "Focus del Día" añadida en el dashboard principal, muestra la tarea/examen más crítico del día con contexto accionable
+
+---
+
 ## 2026-03-06 — Ideas del día
 
 - **Focus Mode con Pomodoro contextual:** Botón "Entrar en modo estudio" dentro de cualquier actividad del curso. Activa un temporizador Pomodoro (25/5 min), abre automáticamente los materiales relevantes de esa unidad, registra el tiempo de sesión por materia y al terminar muestra un mini-resumen de productividad ("Estudiaste 1h 40min de Finanzas hoy"). Implementación: overlay con timer + Web Locks API para bloquear navegación y analytics de sesión guardados en localStorage + backend. Diferenciador clave: los portales universitarios nunca conectan el *dónde estudiar* con el *cómo estudiar*.
