@@ -1,5 +1,6 @@
 {
-  "name": "brightspace-plus",
+  "name": "arca",
+  "description": "ARCA - LMS multi-tenant para universidades mexicanas",
   "version": "0.1.0",
   "private": true,
   "scripts": {
