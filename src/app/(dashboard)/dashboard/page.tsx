@@ -22,6 +22,8 @@ import {
   Star,
   Timer,
   Lock,
+  BookMarked,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import type { Assignment, CalendarEvent } from "@/types";
@@ -515,6 +517,163 @@ function StatCard({
   );
 }
 
+// ─── Horario de Hoy ───────────────────────────────────────────
+interface ClassScheduleItem {
+  id: string;
+  courseName: string;
+  courseColor: string;
+  startTime: string;
+  endTime: string;
+  room: string;
+  professor: string;
+}
+
+const WEEKLY_SCHEDULE: Record<number, ClassScheduleItem[]> = {
+  1: [
+    { id: "cs1", courseName: "Precálculo",               courseColor: "bg-purple-500", startTime: "08:00", endTime: "09:30", room: "B-204",            professor: "Dra. García"  },
+    { id: "cs2", courseName: "Bases de Datos",            courseColor: "bg-blue-500",   startTime: "10:00", endTime: "11:30", room: "C-101",            professor: "Mtro. López"  },
+    { id: "cs3", courseName: "Sistemas Operativos",       courseColor: "bg-cyan-500",   startTime: "13:00", endTime: "14:30", room: "A-305",            professor: "Ing. Martínez"},
+  ],
+  2: [
+    { id: "cs4", courseName: "Emprendimiento",            courseColor: "bg-green-500",  startTime: "09:00", endTime: "10:30", room: "D-201",            professor: "Mtro. Rivera" },
+    { id: "cs5", courseName: "Equipo Representativo",     courseColor: "bg-yellow-500", startTime: "08:00", endTime: "10:00", room: "Cancha Principal", professor: "Mtro. Torres" },
+  ],
+  3: [
+    { id: "cs6", courseName: "Precálculo",               courseColor: "bg-purple-500", startTime: "08:00", endTime: "09:30", room: "B-204",            professor: "Dra. García"  },
+    { id: "cs7", courseName: "Bases de Datos",            courseColor: "bg-blue-500",   startTime: "10:00", endTime: "11:30", room: "C-101",            professor: "Mtro. López"  },
+  ],
+  4: [
+    { id: "cs8", courseName: "Sistemas Operativos",       courseColor: "bg-cyan-500",   startTime: "13:00", endTime: "14:30", room: "A-305",            professor: "Ing. Martínez"},
+    { id: "cs9", courseName: "Emprendimiento",            courseColor: "bg-green-500",  startTime: "09:00", endTime: "10:30", room: "D-201",            professor: "Mtro. Rivera" },
+  ],
+  5: [
+    { id: "cs10", courseName: "Precálculo",               courseColor: "bg-purple-500", startTime: "08:00", endTime: "09:30", room: "B-204",            professor: "Dra. García"  },
+  ],
+  6: [],
+  0: [],
+};
+
+function HorarioDeHoy() {
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const classes = WEEKLY_SCHEDULE[dayOfWeek] ?? [];
+  const now = today.toTimeString().slice(0, 5);
+
+  return (
+    <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-[#30363D]">
+        <div className="flex items-center gap-2">
+          <BookMarked className="w-4 h-4 text-indigo-400" />
+          <h3 className="text-sm font-semibold text-[#E6EDF3]">Horario de hoy</h3>
+        </div>
+        <span className="text-xs text-[#6E7681]">
+          {today.toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "short" })}
+        </span>
+      </div>
+      {classes.length === 0 ? (
+        <p className="text-sm text-[#6E7681] text-center py-6">Sin clases hoy 🎉</p>
+      ) : (
+        <div className="divide-y divide-[#30363D]/50">
+          {classes.map((cls) => {
+            const isActive = now >= cls.startTime && now <= cls.endTime;
+            const isPast = now > cls.endTime;
+            return (
+              <div key={cls.id} className={`flex items-center gap-4 px-5 py-3.5 transition-colors ${isActive ? "bg-indigo-500/5" : ""}`}>
+                <div className="text-right w-20 flex-shrink-0">
+                  <p className={`text-xs font-semibold ${isActive ? "text-indigo-400" : isPast ? "text-[#6E7681]" : "text-[#8B949E]"}`}>
+                    {cls.startTime}
+                  </p>
+                  <p className="text-[10px] text-[#30363D]">{cls.endTime}</p>
+                </div>
+                <div className={`w-0.5 h-10 rounded-full ${cls.courseColor} flex-shrink-0 ${isPast ? "opacity-30" : ""}`} />
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-medium truncate ${isPast ? "text-[#6E7681]" : "text-[#E6EDF3]"}`}>
+                    {cls.courseName}
+                  </p>
+                  <p className="text-[10px] text-[#6E7681]">{cls.professor} · {cls.room}</p>
+                </div>
+                {isActive && (
+                  <span className="text-[10px] font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full flex-shrink-0">
+                    En curso
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Course Completion Rings ───────────────────────────────────
+interface CourseCompletion {
+  id: string;
+  name: string;
+  shortName: string;
+  colorHex: string;
+  submitted: number;
+  total: number;
+}
+
+const COURSE_COMPLETION_DATA: CourseCompletion[] = [
+  { id: "c1", name: "Precálculo",               shortName: "PREC", colorHex: "#a855f7", submitted: 1, total: 4 },
+  { id: "c2", name: "Sistemas Operativos",       shortName: "SO",   colorHex: "#06b6d4", submitted: 3, total: 5 },
+  { id: "c3", name: "Bases de Datos",            shortName: "BD",   colorHex: "#3b82f6", submitted: 2, total: 4 },
+  { id: "c4", name: "Emprendimiento",            shortName: "EMP",  colorHex: "#22c55e", submitted: 1, total: 5 },
+  { id: "c5", name: "Dep. Representativo",       shortName: "DEP",  colorHex: "#eab308", submitted: 4, total: 4 },
+];
+
+function CompletionRing({ pct, colorHex, size = 64 }: { pct: number; colorHex: string; size?: number }) {
+  const r = (size - 10) / 2;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - pct / 100);
+  return (
+    <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#30363D" strokeWidth={6} />
+      <circle
+        cx={size / 2} cy={size / 2} r={r} fill="none"
+        stroke={colorHex} strokeWidth={6}
+        strokeDasharray={circ}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+        style={{ transition: "stroke-dashoffset 0.7s ease" }}
+      />
+    </svg>
+  );
+}
+
+function CourseCompletionWidget() {
+  return (
+    <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
+      <div className="flex items-center gap-2 px-5 py-4 border-b border-[#30363D]">
+        <Trophy className="w-4 h-4 text-indigo-400" />
+        <h3 className="text-sm font-semibold text-[#E6EDF3]">Progreso por materia</h3>
+        <span className="text-xs text-[#6E7681] ml-1">— entregas completadas</span>
+      </div>
+      <div className="p-5 grid grid-cols-5 gap-4">
+        {COURSE_COMPLETION_DATA.map((course) => {
+          const pct = course.total > 0 ? Math.round((course.submitted / course.total) * 100) : 0;
+          return (
+            <div key={course.id} className="flex flex-col items-center gap-2">
+              <div className="relative">
+                <CompletionRing pct={pct} colorHex={course.colorHex} />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xs font-bold text-[#E6EDF3]">{pct}%</span>
+                </div>
+              </div>
+              <div className="text-center">
+                <p className="text-[10px] font-semibold text-[#8B949E]">{course.shortName}</p>
+                <p className="text-[10px] text-[#6E7681]">{course.submitted}/{course.total}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // ─── Page ──────────────────────────────────────────────────────
 export default function DashboardPage() {
   const [currentHour, setCurrentHour] = useState<number>(() => new Date().getHours());
@@ -879,6 +1038,12 @@ export default function DashboardPage() {
           </ul>
         </div>
       </section>
+
+      {/* ── Horario del Día ────────────────────────────────── */}
+      <HorarioDeHoy />
+
+      {/* ── Progreso por Materia ───────────────────────────── */}
+      <CourseCompletionWidget />
     </div>
   );
 }

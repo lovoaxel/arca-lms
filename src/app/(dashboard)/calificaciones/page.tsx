@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BarChart3, AlertTriangle, TrendingUp, TrendingDown, Minus, Calculator, ChevronRight } from "lucide-react";
+import { BarChart3, AlertTriangle, TrendingUp, TrendingDown, Minus, Calculator, ChevronRight, Users } from "lucide-react";
 
 // ─── Types ─────────────────────────────────────────────────────
 interface CourseGrade {

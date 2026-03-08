@@ -6,11 +6,11 @@ export default function Home() {
       {/* Navbar */}
       <nav className="flex items-center justify-between px-8 py-5 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="bg-indigo-500 p-2 rounded-xl">
+          <div style={{backgroundColor: '#6366F1'}} className="p-2 rounded-xl">
             <GraduationCap className="w-6 h-6 text-white" />
           </div>
           <span className="text-xl font-bold tracking-tight">
-            Brightspace <span className="text-indigo-400">Plus</span>
+            ARCA <span style={{color: '#818CF8'}}>LMS</span>
           </span>
         </div>
         <span className="text-sm text-[#8B949E]">Universidad Anáhuac</span>
@@ -24,32 +24,28 @@ export default function Home() {
         </div>
 
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
-          Brightspace{" "}
+          ARCA{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">
-            Plus
+            LMS
           </span>
         </h1>
 
         <p className="text-[#8B949E] text-lg md:text-xl max-w-2xl mb-12 leading-relaxed">
-          Todas las funcionalidades de Brightspace Anáhuac con una interfaz moderna,
-          inteligente y diseñada para ti. Con IA integrada y notificaciones en tiempo real.
+          El portal universitario que Anáhuac merece. Cursos, tareas, calificaciones
+          y calendario en una interfaz moderna con IA integrada.
         </p>
 
         <a
-          href="/api/auth/login"
-          className="group flex items-center gap-3 bg-white text-[#0D1117] font-semibold px-8 py-4 rounded-2xl text-lg hover:bg-indigo-50 transition-all duration-200 shadow-lg hover:shadow-indigo-500/20 hover:scale-105"
+          href="/dashboard"
+          className="group flex items-center gap-3 text-white font-semibold px-8 py-4 rounded-2xl text-lg transition-all duration-200 shadow-lg hover:scale-105"
+          style={{backgroundColor: '#6366F1'}}
         >
-          <svg className="w-6 h-6" viewBox="0 0 21 21" fill="none">
-            <rect x="1" y="1" width="9" height="9" fill="#F25022" />
-            <rect x="11" y="1" width="9" height="9" fill="#7FBA00" />
-            <rect x="1" y="11" width="9" height="9" fill="#00A4EF" />
-            <rect x="11" y="11" width="9" height="9" fill="#FFB900" />
-          </svg>
-          Iniciar sesión con cuenta Anáhuac
+          <GraduationCap className="w-6 h-6" />
+          Entrar al portal
         </a>
 
         <p className="text-[#6E7681] text-sm mt-4">
-          Usa tus credenciales institucionales de Microsoft
+          Universidad Anáhuac · Semestre 202610
         </p>
       </section>
 
@@ -100,7 +96,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="text-center text-[#6E7681] text-sm pb-8">
-        Brightspace Plus — Desarrollado por Axel Lovo · Universidad Anáhuac 2026
+        ARCA LMS — Desarrollado por Axel Lovo · Universidad Anáhuac 2026
       </footer>
     </main>
   );
