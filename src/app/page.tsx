@@ -18,7 +18,7 @@ export default function Home() {
 
       {/* Hero */}
       <section className="flex flex-col items-center justify-center text-center px-6 py-28">
-        <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-4 py-1.5 text-sm text-indigo-400 mb-8">
+        <div className="inline-flex items-center gap-2 bg-[#6366F1]/10 border border-[#6366F1]/20 rounded-full px-4 py-1.5 text-sm text-[#818CF8] mb-8">
           <Zap className="w-4 h-4" />
           Tu portal universitario, reinventado
         </div>
@@ -53,7 +53,7 @@ export default function Home() {
       <section className="max-w-5xl mx-auto px-6 pb-24 grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
           {
-            icon: <BookOpen className="w-6 h-6 text-indigo-400" />,
+            icon: <BookOpen className="w-6 h-6 text-[#818CF8]" />,
             title: "Cursos modernos",
             desc: "Vista clara de tus materias, tareas y calificaciones en un solo lugar.",
           },

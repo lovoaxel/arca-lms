@@ -229,7 +229,7 @@ const EVENT_TYPE_LABELS: Record<CalendarEvent["type"], string> = {
 
 const PRIORITY_STYLES: Record<Assignment["priority"], string> = {
   urgent: "text-red-400 bg-red-500/10 border-red-500/20",
-  high:   "text-indigo-400 bg-indigo-500/10 border-indigo-500/20",
+  high:   "text-[#818CF8] bg-[#6366F1]/10 border-[#6366F1]/20",
   medium: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
   low:    "text-[#8B949E] bg-[#30363D]/40 border-[#30363D]",
 };
@@ -348,10 +348,10 @@ function FocusDelDia({ assignments, events }: { assignments: Assignment[]; event
   const isExam = focus.type === "exam";
 
   return (
-    <div className={`rounded-xl border p-4 ${isExam ? "bg-red-500/5 border-red-500/25" : "bg-indigo-500/5 border-indigo-500/20"}`}>
+    <div className={`rounded-xl border p-4 ${isExam ? "bg-red-500/5 border-red-500/25" : "bg-[#6366F1]/5 border-[#6366F1]/20"}`}>
       <div className="flex items-center gap-2 mb-3">
-        <Target className={`w-4 h-4 ${isExam ? "text-red-400" : "text-indigo-400"}`} />
-        <h3 className={`text-sm font-semibold ${isExam ? "text-red-400" : "text-indigo-400"}`}>
+        <Target className={`w-4 h-4 ${isExam ? "text-red-400" : "text-[#818CF8]"}`} />
+        <h3 className={`text-sm font-semibold ${isExam ? "text-red-400" : "text-[#818CF8]"}`}>
           Focus del Día
         </h3>
         <span className="text-xs text-[#6E7681] ml-auto">{isExam ? "📋 Examen" : "📌 Tarea prioritaria"}</span>
@@ -370,7 +370,7 @@ function FocusDelDia({ assignments, events }: { assignments: Assignment[]; event
               </>
             )}
             <span className="text-[#30363D]">·</span>
-            <span className={`text-xs font-semibold ${isExam ? "text-red-400" : "text-indigo-400"}`}>
+            <span className={`text-xs font-semibold ${isExam ? "text-red-400" : "text-[#818CF8]"}`}>
               {focus.dueDate}
             </span>
           </div>
@@ -425,7 +425,7 @@ function WeeklyLoadMap({ assignments }: { assignments: Assignment[] }) {
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-[#30363D]">
         <div className="flex items-center gap-2">
-          <Activity className="w-4 h-4 text-indigo-400" />
+          <Activity className="w-4 h-4 text-[#818CF8]" />
           <h3 className="text-sm font-semibold text-[#E6EDF3]">Carga académica</h3>
           <span className="text-xs text-[#6E7681]">— próximas 4 semanas</span>
         </div>
@@ -440,11 +440,11 @@ function WeeklyLoadMap({ assignments }: { assignments: Assignment[] }) {
           return (
             <div
               key={i}
-              className={`border rounded-xl p-3.5 flex flex-col gap-2 transition-all ${style.card} ${week.isCurrentWeek ? "ring-1 ring-indigo-500/30" : ""}`}
+              className={`border rounded-xl p-3.5 flex flex-col gap-2 transition-all ${style.card} ${week.isCurrentWeek ? "ring-1 ring-[#6366F1]/30" : ""}`}
             >
               {/* Week label */}
               <div>
-                <p className={`text-[10px] font-bold uppercase tracking-wider ${week.isCurrentWeek ? "text-indigo-400" : "text-[#8B949E]"}`}>
+                <p className={`text-[10px] font-bold uppercase tracking-wider ${week.isCurrentWeek ? "text-[#818CF8]" : "text-[#8B949E]"}`}>
                   {week.label}
                 </p>
                 <p className="text-[9px] text-[#30363D] leading-tight mt-0.5">{week.sublabel}</p>
@@ -563,7 +563,7 @@ function HorarioDeHoy() {
     <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 border-b border-[#30363D]">
         <div className="flex items-center gap-2">
-          <BookMarked className="w-4 h-4 text-indigo-400" />
+          <BookMarked className="w-4 h-4 text-[#818CF8]" />
           <h3 className="text-sm font-semibold text-[#E6EDF3]">Horario de hoy</h3>
         </div>
         <span className="text-xs text-[#6E7681]">
@@ -578,9 +578,9 @@ function HorarioDeHoy() {
             const isActive = now >= cls.startTime && now <= cls.endTime;
             const isPast = now > cls.endTime;
             return (
-              <div key={cls.id} className={`flex items-center gap-4 px-5 py-3.5 transition-colors ${isActive ? "bg-indigo-500/5" : ""}`}>
+              <div key={cls.id} className={`flex items-center gap-4 px-5 py-3.5 transition-colors ${isActive ? "bg-[#6366F1]/5" : ""}`}>
                 <div className="text-right w-20 flex-shrink-0">
-                  <p className={`text-xs font-semibold ${isActive ? "text-indigo-400" : isPast ? "text-[#6E7681]" : "text-[#8B949E]"}`}>
+                  <p className={`text-xs font-semibold ${isActive ? "text-[#818CF8]" : isPast ? "text-[#6E7681]" : "text-[#8B949E]"}`}>
                     {cls.startTime}
                   </p>
                   <p className="text-[10px] text-[#30363D]">{cls.endTime}</p>
@@ -593,7 +593,7 @@ function HorarioDeHoy() {
                   <p className="text-[10px] text-[#6E7681]">{cls.professor} · {cls.room}</p>
                 </div>
                 {isActive && (
-                  <span className="text-[10px] font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full flex-shrink-0">
+                  <span className="text-[10px] font-semibold text-[#818CF8] bg-[#6366F1]/10 border border-[#6366F1]/20 px-2 py-0.5 rounded-full flex-shrink-0">
                     En curso
                   </span>
                 )}
@@ -647,7 +647,7 @@ function CourseCompletionWidget() {
   return (
     <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
       <div className="flex items-center gap-2 px-5 py-4 border-b border-[#30363D]">
-        <Trophy className="w-4 h-4 text-indigo-400" />
+        <Trophy className="w-4 h-4 text-[#818CF8]" />
         <h3 className="text-sm font-semibold text-[#E6EDF3]">Progreso por materia</h3>
         <span className="text-xs text-[#6E7681] ml-1">— entregas completadas</span>
       </div>
@@ -718,11 +718,11 @@ export default function DashboardPage() {
             </p>
             <h2 className="text-2xl font-bold text-[#E6EDF3]">
               {greeting},{" "}
-              <span className="text-indigo-400">Axel</span> 👋
+              <span className="text-[#818CF8]">Axel</span> 👋
             </h2>
             <p className="text-sm text-[#8B949E] mt-1">
               Tienes{" "}
-              <span className="text-indigo-400 font-semibold">
+              <span className="text-[#818CF8] font-semibold">
                 {stats.pendingAssignments} tareas pendientes
               </span>{" "}
               esta semana.
@@ -734,7 +734,7 @@ export default function DashboardPage() {
       {/* ── Progreso del Semestre ──────────────────────────── */}
       <section className="bg-[#161B22] border border-[#30363D] rounded-xl p-5">
         <div className="flex items-center gap-2 mb-3">
-          <GraduationCap className="w-4 h-4 text-indigo-400" />
+          <GraduationCap className="w-4 h-4 text-[#818CF8]" />
           <h3 className="text-sm font-semibold text-[#E6EDF3]">Progreso del semestre</h3>
           <span className="text-xs text-[#6E7681] ml-auto">
             Ene 20 – May 31, 2026
@@ -742,7 +742,7 @@ export default function DashboardPage() {
         </div>
         <div className="w-full h-3 bg-[#30363D] rounded-full overflow-hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-indigo-400 transition-all duration-700"
+            className="h-full rounded-full bg-gradient-to-r from-[#6366F1] to-[#818CF8] transition-all duration-700"
             style={{ width: `${semesterProgress.percentage}%` }}
           />
         </div>
@@ -750,7 +750,7 @@ export default function DashboardPage() {
           <span className="text-xs text-[#8B949E]">
             {semesterProgress.daysPassed} de {semesterProgress.totalDays} días transcurridos
           </span>
-          <span className="text-sm font-bold text-indigo-400">
+          <span className="text-sm font-bold text-[#818CF8]">
             {semesterProgress.percentage.toFixed(1)}%
           </span>
         </div>
@@ -890,16 +890,16 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Link
             href="/tareas"
-            className="flex items-center gap-3 p-4 bg-[#161B22] border border-[#30363D] rounded-xl hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-all group"
+            className="flex items-center gap-3 p-4 bg-[#161B22] border border-[#30363D] rounded-xl hover:border-[#6366F1]/30 hover:bg-[#6366F1]/5 transition-all group"
           >
-            <div className="w-9 h-9 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-500/20 transition-colors">
-              <ClipboardList className="w-4.5 h-4.5 text-indigo-400" />
+            <div className="w-9 h-9 rounded-lg bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center flex-shrink-0 group-hover:bg-[#6366F1]/20 transition-colors">
+              <ClipboardList className="w-4.5 h-4.5 text-[#818CF8]" />
             </div>
             <div>
               <p className="text-sm font-medium text-[#E6EDF3]">Ver tareas</p>
               <p className="text-xs text-[#6E7681]">{stats.pendingAssignments} pendientes</p>
             </div>
-            <ArrowRight className="w-4 h-4 text-[#30363D] ml-auto group-hover:text-indigo-400 transition-colors" />
+            <ArrowRight className="w-4 h-4 text-[#30363D] ml-auto group-hover:text-[#818CF8] transition-colors" />
           </Link>
 
           <Link
@@ -941,12 +941,12 @@ export default function DashboardPage() {
         <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#30363D]">
             <div className="flex items-center gap-2">
-              <Flame className="w-4 h-4 text-indigo-400" />
+              <Flame className="w-4 h-4 text-[#818CF8]" />
               <h3 className="text-sm font-semibold text-[#E6EDF3]">Tareas urgentes</h3>
             </div>
             <Link
               href="/tareas"
-              className="flex items-center gap-1 text-xs text-[#8B949E] hover:text-indigo-400 transition-colors"
+              className="flex items-center gap-1 text-xs text-[#8B949E] hover:text-[#818CF8] transition-colors"
             >
               Ver todas <ArrowRight className="w-3 h-3" />
             </Link>
@@ -962,7 +962,7 @@ export default function DashboardPage() {
                       {assignment.status === "submitted" ? (
                         <CheckCircle2 className="w-4 h-4 text-green-500" />
                       ) : (
-                        <AlertCircle className={`w-4 h-4 ${assignment.priority === "urgent" ? "text-red-400" : assignment.priority === "high" ? "text-indigo-400" : "text-yellow-400"}`} />
+                        <AlertCircle className={`w-4 h-4 ${assignment.priority === "urgent" ? "text-red-400" : assignment.priority === "high" ? "text-[#818CF8]" : "text-yellow-400"}`} />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -995,12 +995,12 @@ export default function DashboardPage() {
         <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#30363D]">
             <div className="flex items-center gap-2">
-              <CalendarDays className="w-4 h-4 text-indigo-400" />
+              <CalendarDays className="w-4 h-4 text-[#818CF8]" />
               <h3 className="text-sm font-semibold text-[#E6EDF3]">Próximos eventos</h3>
             </div>
             <Link
               href="/calendario"
-              className="flex items-center gap-1 text-xs text-[#8B949E] hover:text-indigo-400 transition-colors"
+              className="flex items-center gap-1 text-xs text-[#8B949E] hover:text-[#818CF8] transition-colors"
             >
               Ver calendario <ArrowRight className="w-3 h-3" />
             </Link>

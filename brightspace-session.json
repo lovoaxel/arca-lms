@@ -1,0 +1,45 @@
+{
+  "cookies": [
+    {
+      "name": "d2lSameSiteCanaryA",
+      "value": "1",
+      "domain": "anahuac.brightspace.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "d2lSameSiteCanaryB",
+      "value": "1",
+      "domain": "anahuac.brightspace.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "d2lSessionVal",
+      "value": "srA5dKbOMpGf12Mr5oHgeXIpazyMuzlg07rG",
+      "domain": "anahuac.brightspace.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "d2lSecureSessionVal",
+      "value": "gDEJbchB5ArF5eFD0D3L5Juc6XsXRwGwWCG3",
+      "domain": "anahuac.brightspace.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    }
+  ],
+  "savedAt": "2026-03-08T14:30:00.000Z"
+}

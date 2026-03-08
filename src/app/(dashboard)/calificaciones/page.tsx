@@ -124,7 +124,7 @@ function calcOverallAverage(courses: CourseGrade[]): number {
 const TARGET_OPTIONS = [
   { label: "Pasar",  value: 6.0, color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/30" },
   { label: "Bien",   value: 7.0, color: "text-blue-400   bg-blue-500/10   border-blue-500/30"   },
-  { label: "Alto",   value: 8.0, color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/30" },
+  { label: "Alto",   value: 8.0, color: "text-[#818CF8] bg-[#6366F1]/10 border-[#6366F1]/30" },
   { label: "9.0",    value: 9.0, color: "text-green-400  bg-green-500/10  border-green-500/30"  },
 ];
 
@@ -137,7 +137,7 @@ function GradeTargetCalculator({ courses }: { courses: CourseGrade[] }) {
     <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-2 px-5 py-4 border-b border-[#30363D]">
-        <Calculator className="w-4 h-4 text-indigo-400" />
+        <Calculator className="w-4 h-4 text-[#818CF8]" />
         <h3 className="text-sm font-semibold text-[#E6EDF3]">Calculadora de nota mínima</h3>
         <span className="text-xs text-[#6E7681] ml-1">— ¿Cuánto necesito para llegar a mi meta?</span>
       </div>
@@ -215,7 +215,7 @@ function GradeTargetCalculator({ courses }: { courses: CourseGrade[] }) {
                   ) : (
                     <span className="text-xs text-[#E6EDF3]">
                       Necesitas{" "}
-                      <span className={`font-bold text-sm ${neededOnRemaining >= 9 ? "text-indigo-400" : "text-blue-400"}`}>
+                      <span className={`font-bold text-sm ${neededOnRemaining >= 9 ? "text-[#818CF8]" : "text-blue-400"}`}>
                         {neededOnRemaining.toFixed(1)}/10
                       </span>
                       {" "}en actividades restantes
@@ -308,7 +308,7 @@ function CalculadoraPromedio() {
     <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-2 px-5 py-4 border-b border-[#30363D]">
-        <Calculator className="w-4 h-4 text-indigo-400" />
+        <Calculator className="w-4 h-4 text-[#818CF8]" />
         <h3 className="text-sm font-semibold text-[#E6EDF3]">Calculadora de Promedio Ponderado</h3>
         <span className="text-xs text-[#6E7681] ml-1">— Ajusta calificaciones esperadas y créditos</span>
       </div>
@@ -344,7 +344,7 @@ function CalculadoraPromedio() {
                   max={20}
                   value={m.creditos}
                   onChange={(e) => handleCreditosChange(m.id, e.target.value)}
-                  className="w-full text-center text-sm font-semibold text-[#E6EDF3] bg-[#30363D] border border-[#30363D] rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 focus:border-indigo-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full text-center text-sm font-semibold text-[#E6EDF3] bg-[#30363D] border border-[#30363D] rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-[#6366F1]/50 focus:border-[#6366F1]/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
 
                 {/* Calificacion */}
@@ -355,7 +355,7 @@ function CalculadoraPromedio() {
                   step={0.1}
                   value={m.calificacion}
                   onChange={(e) => handleGradeChange(m.id, e.target.value)}
-                  className={`w-full text-center text-sm font-bold bg-[#30363D] border rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 focus:border-indigo-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+                  className={`w-full text-center text-sm font-bold bg-[#30363D] border rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-[#6366F1]/50 focus:border-[#6366F1]/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
                     m.calificacion >= 8
                       ? "text-green-400 border-green-500/30"
                       : m.calificacion >= 6
@@ -627,10 +627,10 @@ function getRisk(grade: number, trend: CourseGrade["trend"]): RiskLevel {
   if (grade < 7.5 && trend === "down") {
     return {
       label: "Riesgo moderado",
-      color: "text-indigo-400",
-      bg: "bg-indigo-500/10",
-      border: "border-indigo-500/25",
-      dot: "bg-indigo-500",
+      color: "text-[#818CF8]",
+      bg: "bg-[#6366F1]/10",
+      border: "border-[#6366F1]/25",
+      dot: "bg-[#6366F1]",
       advice: "Calificación bajando. Revisa tu rendimiento antes del siguiente parcial.",
     };
   }
@@ -661,7 +661,7 @@ function AcademicRiskPanel({ courses }: { courses: CourseGrade[] }) {
   const safe = courses.filter((c) => c.currentGrade >= 7.5);
 
   const overallRisk = critical.length > 0 ? "Crítico" : moderate.length > 0 ? "Moderado" : attention.length > 0 ? "Atención" : "Saludable";
-  const overallColor = critical.length > 0 ? "text-red-400" : moderate.length > 0 ? "text-indigo-400" : attention.length > 0 ? "text-yellow-400" : "text-green-400";
+  const overallColor = critical.length > 0 ? "text-red-400" : moderate.length > 0 ? "text-[#818CF8]" : attention.length > 0 ? "text-yellow-400" : "text-green-400";
 
   return (
     <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
@@ -671,7 +671,7 @@ function AcademicRiskPanel({ courses }: { courses: CourseGrade[] }) {
           <div className="w-4 h-4 flex items-center justify-center">
             <div className="relative w-3 h-3">
               <div className="absolute inset-0 rounded-full bg-red-500/30 animate-ping" />
-              <div className={`absolute inset-0 rounded-full ${critical.length > 0 ? "bg-red-500" : moderate.length > 0 ? "bg-indigo-500" : attention.length > 0 ? "bg-yellow-500" : "bg-green-500"}`} />
+              <div className={`absolute inset-0 rounded-full ${critical.length > 0 ? "bg-red-500" : moderate.length > 0 ? "bg-[#6366F1]" : attention.length > 0 ? "bg-yellow-500" : "bg-green-500"}`} />
             </div>
           </div>
           <h3 className="text-sm font-semibold text-[#E6EDF3]">Panel de Riesgo Académico</h3>
@@ -679,7 +679,7 @@ function AcademicRiskPanel({ courses }: { courses: CourseGrade[] }) {
         </div>
         <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
           critical.length > 0 ? "bg-red-500/10 text-red-400 border-red-500/25" :
-          moderate.length > 0 ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/25" :
+          moderate.length > 0 ? "bg-[#6366F1]/10 text-[#818CF8] border-[#6366F1]/25" :
           attention.length > 0 ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/25" :
           "bg-green-500/10 text-green-400 border-green-500/25"
         }`}>
@@ -691,7 +691,7 @@ function AcademicRiskPanel({ courses }: { courses: CourseGrade[] }) {
       <div className="grid grid-cols-4 divide-x divide-[#30363D] border-b border-[#30363D]">
         {[
           { count: critical.length,  label: "Crítico",   color: "text-red-400",    bg: "bg-red-500" },
-          { count: moderate.length,  label: "Moderado",  color: "text-indigo-400", bg: "bg-indigo-500" },
+          { count: moderate.length,  label: "Moderado",  color: "text-[#818CF8]", bg: "bg-[#6366F1]" },
           { count: attention.length, label: "Atención",  color: "text-yellow-400", bg: "bg-yellow-500" },
           { count: safe.length,      label: "Sin riesgo",color: "text-green-400",  bg: "bg-green-500" },
         ].map(({ count, label, color, bg }) => (
@@ -847,7 +847,7 @@ function SummaryChart({ courses }: { courses: CourseGrade[] }) {
   return (
     <div className="bg-[#161B22] border border-[#30363D] rounded-xl p-5">
       <div className="flex items-center gap-2 mb-5">
-        <BarChart3 className="w-4 h-4 text-indigo-400" />
+        <BarChart3 className="w-4 h-4 text-[#818CF8]" />
         <h3 className="text-sm font-semibold text-[#E6EDF3]">Resumen por materia</h3>
       </div>
 
@@ -907,8 +907,8 @@ export default function CalificacionesPage() {
             Semestre enero–junio 2026 · {COURSES.length} materias
           </p>
         </div>
-        <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-          <BarChart3 className="w-4 h-4 text-indigo-400" />
+        <div className="w-8 h-8 rounded-lg bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center">
+          <BarChart3 className="w-4 h-4 text-[#818CF8]" />
         </div>
       </section>
 

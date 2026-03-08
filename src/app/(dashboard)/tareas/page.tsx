@@ -306,7 +306,7 @@ const STATUS_CONFIG: Record<Assignment["status"], { label: string; icon: React.C
 
 const PRIORITY_CONFIG: Record<Assignment["priority"], { label: string; cls: string }> = {
   urgent: { label: "Urgente", cls: "text-red-400 bg-red-500/10 border-red-500/20" },
-  high:   { label: "Alta",    cls: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20" },
+  high:   { label: "Alta",    cls: "text-[#818CF8] bg-[#6366F1]/10 border-[#6366F1]/20" },
   medium: { label: "Media",   cls: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20" },
   low:    { label: "Normal",  cls: "text-[#8B949E] bg-[#1C2128] border-[#30363D]" },
 };
@@ -333,8 +333,8 @@ function AIDraftModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#30363D]">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-indigo-400" />
+            <div className="w-8 h-8 rounded-lg bg-[#6366F1]/15 border border-[#6366F1]/20 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-[#818CF8]" />
             </div>
             <div>
               <p className="text-sm font-semibold text-[#E6EDF3]">Borrador IA — Jarvis</p>
@@ -353,7 +353,7 @@ function AIDraftModal({
           <div className="prose prose-sm prose-invert max-w-none">
             {draft.split("\n").map((line, i) => {
               if (line.startsWith("## "))
-                return <h2 key={i} className="text-sm font-semibold text-indigo-400 mt-4 mb-2">{line.replace("## ", "")}</h2>;
+                return <h2 key={i} className="text-sm font-semibold text-[#818CF8] mt-4 mb-2">{line.replace("## ", "")}</h2>;
               if (line.startsWith("# "))
                 return <h1 key={i} className="text-base font-bold text-[#E6EDF3] mb-3">{line.replace("# ", "")}</h1>;
               if (line.startsWith("### "))
@@ -370,7 +370,7 @@ function AIDraftModal({
         </div>
         {/* Footer */}
         <div className="px-6 py-3 border-t border-[#30363D] flex items-center gap-2">
-          <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+          <Sparkles className="w-3.5 h-3.5 text-[#818CF8]" />
           <p className="text-xs text-[#6E7681]">Generado por Jarvis · Solo orientativo, verifica con tu profesor</p>
         </div>
       </div>
@@ -425,7 +425,7 @@ function AssignmentRow({
       {(assignment.status === "pending" || assignment.status === "late") && (
         <button
           onClick={() => onViewDraft(assignment)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium hover:bg-indigo-500/20 transition-colors flex-shrink-0"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#6366F1]/10 border border-[#6366F1]/20 text-[#818CF8] text-xs font-medium hover:bg-[#6366F1]/20 transition-colors flex-shrink-0"
         >
           <Sparkles className="w-3 h-3" />
           <span className="hidden sm:inline">Ver borrador IA</span>
@@ -465,7 +465,7 @@ function CourseGroup({
           <BookOpen className="w-3.5 h-3.5 text-[#8B949E]" />
           <span className="text-sm font-semibold text-[#E6EDF3]">{courseName}</span>
           {pendingCount > 0 && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 font-medium">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#6366F1]/15 text-[#818CF8] font-medium">
               {pendingCount} pendiente{pendingCount > 1 ? "s" : ""}
             </span>
           )}
@@ -532,8 +532,8 @@ export default function TareasPage() {
               {MOCK_ASSIGNMENTS.filter((a) => a.status === "pending").length} pendientes · {MOCK_ASSIGNMENTS.length} total
             </p>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-            <ClipboardList className="w-4 h-4 text-indigo-400" />
+          <div className="w-8 h-8 rounded-lg bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center">
+            <ClipboardList className="w-4 h-4 text-[#818CF8]" />
           </div>
         </section>
 
@@ -546,13 +546,13 @@ export default function TareasPage() {
               className={`
                 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150
                 ${activeFilter === f.key
-                  ? "bg-indigo-500/15 text-indigo-400 border border-indigo-500/20"
+                  ? "bg-[#6366F1]/15 text-[#818CF8] border border-[#6366F1]/20"
                   : "text-[#8B949E] hover:text-[#E6EDF3]"
                 }
               `}
             >
               {f.label}
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${activeFilter === f.key ? "bg-indigo-500/20 text-indigo-400" : "bg-[#30363D] text-[#8B949E]"}`}>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${activeFilter === f.key ? "bg-[#6366F1]/20 text-[#818CF8]" : "bg-[#30363D] text-[#8B949E]"}`}>
                 {f.count}
               </span>
             </button>

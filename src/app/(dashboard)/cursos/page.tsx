@@ -154,7 +154,7 @@ function formatDueDateShort(iso: string): { label: string; urgent: boolean } {
 function gradeColor(g: number): string {
   if (g >= 9) return "text-green-400";
   if (g >= 8) return "text-yellow-400";
-  if (g >= 7) return "text-indigo-400";
+  if (g >= 7) return "text-[#818CF8]";
   return "text-red-400";
 }
 
@@ -272,7 +272,7 @@ function QuickStat({
 }) {
   return (
     <div className="flex items-center gap-3 bg-[#161B22] border border-[#30363D] rounded-xl px-4 py-3">
-      <Icon className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+      <Icon className="w-4 h-4 text-[#818CF8] flex-shrink-0" />
       <div>
         <p className="text-lg font-bold text-[#E6EDF3] leading-tight">{value}</p>
         <p className="text-xs text-[#8B949E]">{label}</p>
@@ -304,7 +304,7 @@ export default function CursosPage() {
         </div>
         <Link
           href="/calificaciones"
-          className="flex items-center gap-1.5 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+          className="flex items-center gap-1.5 text-xs font-medium text-[#818CF8] hover:text-[#A5B4FC] transition-colors"
         >
           Ver calificaciones
           <ChevronRight className="w-3.5 h-3.5" />
@@ -339,3 +339,4 @@ export default function CursosPage() {
     </div>
   );
 }
+

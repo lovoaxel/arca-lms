@@ -277,13 +277,13 @@ export default function CalendarioPage() {
           <button
             onClick={() => downloadICS(DELIVERIES)}
             title="Exportar a Google Calendar / Apple Calendar / Outlook"
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#30363D] border border-[#30363D] text-xs font-medium text-[#E6EDF3] hover:bg-[#30363D] hover:text-[#E6EDF3] hover:border-indigo-500/40 transition-all"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#30363D] border border-[#30363D] text-xs font-medium text-[#E6EDF3] hover:bg-[#30363D] hover:text-[#E6EDF3] hover:border-[#6366F1]/40 transition-all"
           >
-            <Download className="w-3.5 h-3.5 text-indigo-400" />
+            <Download className="w-3.5 h-3.5 text-[#818CF8]" />
             Exportar .ics
           </button>
-          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-            <Calendar className="w-4 h-4 text-indigo-400" />
+          <div className="w-8 h-8 rounded-lg bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center">
+            <Calendar className="w-4 h-4 text-[#818CF8]" />
           </div>
         </div>
       </section>
