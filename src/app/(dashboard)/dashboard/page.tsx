@@ -605,35 +605,15 @@ export default function DashboardPage() {
       {/* ── Motivación contextual ─────────────────────────── */}
       <section>
         <div
-          className={`rounded-xl border p-4 flex items-start gap-3 ${
-            motivation.type === "warning"
-              ? "bg-red-500/5 border-red-500/25"
-              : motivation.type === "success"
-              ? "bg-green-500/5 border-green-500/25"
-              : "bg-blue-500/5 border-blue-500/25"
-          }`}
+          className="rounded-xl border border-[#30363D] bg-[#161B22] p-4 flex items-start gap-3"
         >
-          {motivation.type === "warning" ? (
-            <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-          ) : motivation.type === "success" ? (
-            <Trophy className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-          ) : (
-            <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-          )}
+          <Info className="w-4 h-4 text-[#6E7681] flex-shrink-0 mt-0.5" />
           <div>
-            <p
-              className={`text-sm font-semibold ${
-                motivation.type === "warning"
-                  ? "text-red-400"
-                  : motivation.type === "success"
-                  ? "text-green-400"
-                  : "text-blue-400"
-              }`}
-            >
+            <p className="text-sm font-semibold text-[#E6EDF3]">
               {motivation.type === "warning"
                 ? "Atención con tu promedio"
                 : motivation.type === "success"
-                ? "¡Felicidades!"
+                ? "¡Excelente semestre!"
                 : "Sigue adelante"}
             </p>
             <p className="text-xs text-[#8B949E] mt-1">{motivation.message}</p>
@@ -650,10 +630,10 @@ export default function DashboardPage() {
       {/* ── Urgente Alert (48h) ─────────────────────────────── */}
       {urgent48h.length > 0 && (
         <section>
-          <div className="bg-red-500/5 border border-red-500/25 rounded-xl p-4">
+          <div className="bg-[#161B22] border-l-2 border-l-red-500/60 border border-[#30363D] rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
-              <Zap className="w-4 h-4 text-red-400" />
-              <h3 className="text-sm font-semibold text-red-400">
+              <Zap className="w-4 h-4 text-[#8B949E]" />
+              <h3 className="text-sm font-semibold text-[#E6EDF3]">
                 ¡Atención! {urgent48h.length} entrega{urgent48h.length > 1 ? "s" : ""} en las próximas 48 horas
               </h3>
             </div>
@@ -685,10 +665,10 @@ export default function DashboardPage() {
       {/* ── Low Grade Alert ─────────────────────────────────── */}
       {LOW_GRADE_COURSES.length > 0 && (
         <section>
-          <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-4">
+          <div className="bg-[#161B22] border-l-2 border-l-yellow-500/60 border border-[#30363D] rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
-              <AlertTriangle className="w-4 h-4 text-yellow-400" />
-              <h3 className="text-sm font-semibold text-yellow-400">
+              <AlertTriangle className="w-4 h-4 text-[#8B949E]" />
+              <h3 className="text-sm font-semibold text-[#E6EDF3]">
                 Calificaciones bajas en {LOW_GRADE_COURSES.length} materia{LOW_GRADE_COURSES.length > 1 ? "s" : ""}
               </h3>
             </div>
@@ -720,28 +700,28 @@ export default function DashboardPage() {
           label="Tareas pendientes"
           value={stats.pendingAssignments}
           sub="Esta semana"
-          accentClass="bg-indigo-500/15 text-indigo-400"
+          accentClass="bg-[#6366F1]/10 text-[#818CF8]"
         />
         <StatCard
           icon={Clock}
           label="Próximas entregas"
           value={stats.upcomingDeadlines}
           sub="En los próximos 7 días"
-          accentClass="bg-red-500/15 text-red-400"
+          accentClass="bg-[#6366F1]/10 text-[#818CF8]"
         />
         <StatCard
           icon={TrendingUp}
           label="Promedio general"
           value={stats.overallAverage.toFixed(1)}
           sub="Calificación actual"
-          accentClass={stats.overallAverage < 6 ? "bg-red-500/15 text-red-400" : stats.overallAverage < 8 ? "bg-yellow-500/15 text-yellow-400" : "bg-green-500/15 text-green-400"}
+          accentClass="bg-[#6366F1]/10 text-[#818CF8]"
         />
         <StatCard
           icon={BookOpen}
           label="Cursos activos"
           value={stats.activeCourses}
           sub="Este semestre"
-          accentClass="bg-blue-500/15 text-blue-400"
+          accentClass="bg-[#6366F1]/10 text-[#818CF8]"
         />
       </section>
 
@@ -765,10 +745,10 @@ export default function DashboardPage() {
 
           <Link
             href="/calendario"
-            className="flex items-center gap-3 p-4 bg-[#161B22] border border-[#30363D] rounded-xl hover:border-blue-500/30 hover:bg-blue-500/5 transition-all group"
+            className="flex items-center gap-3 p-4 bg-[#161B22] border border-[#30363D] rounded-xl hover:border-[#6366F1]/30 hover:bg-[#6366F1]/5 transition-all group"
           >
-            <div className="w-9 h-9 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500/20 transition-colors">
-              <CalendarDays className="w-4.5 h-4.5 text-blue-400" />
+            <div className="w-9 h-9 rounded-lg bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center flex-shrink-0 group-hover:bg-[#6366F1]/20 transition-colors">
+              <CalendarDays className="w-4.5 h-4.5 text-[#818CF8]" />
             </div>
             <div>
               <p className="text-sm font-medium text-[#E6EDF3]">Ver calendario</p>
@@ -779,10 +759,10 @@ export default function DashboardPage() {
 
           <Link
             href="/calificaciones"
-            className="flex items-center gap-3 p-4 bg-[#161B22] border border-[#30363D] rounded-xl hover:border-green-500/30 hover:bg-green-500/5 transition-all group"
+            className="flex items-center gap-3 p-4 bg-[#161B22] border border-[#30363D] rounded-xl hover:border-[#6366F1]/30 hover:bg-[#6366F1]/5 transition-all group"
           >
-            <div className="w-9 h-9 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-green-500/20 transition-colors">
-              <BarChart3 className="w-4.5 h-4.5 text-green-400" />
+            <div className="w-9 h-9 rounded-lg bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center flex-shrink-0 group-hover:bg-[#6366F1]/20 transition-colors">
+              <BarChart3 className="w-4.5 h-4.5 text-[#818CF8]" />
             </div>
             <div>
               <p className="text-sm font-medium text-[#E6EDF3]">Calificaciones</p>
