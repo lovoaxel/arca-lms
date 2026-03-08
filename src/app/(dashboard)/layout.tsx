@@ -62,14 +62,14 @@ function SidebarLink({ item, isActive, onClick }: {
         flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
         transition-all duration-150 group
         ${isActive
-          ? "bg-indigo-500/15 text-indigo-400 border border-indigo-500/20"
+          ? "bg-[#6366F1]/15 text-[#818CF8] border border-[#6366F1]/20"
           : "text-[#8B949E] hover:text-[#E6EDF3] hover:bg-[#1C2128]"
         }
       `}
     >
-      <Icon className={`w-4 h-4 flex-shrink-0 transition-transform duration-150 group-hover:scale-110 ${isActive ? "text-indigo-400" : ""}`} />
+      <Icon className={`w-4 h-4 flex-shrink-0 transition-transform duration-150 group-hover:scale-110 ${isActive ? "text-[#818CF8]" : ""}`} />
       <span>{item.label}</span>
-      {isActive && <ChevronRight className="w-3 h-3 ml-auto text-indigo-400/60" />}
+      {isActive && <ChevronRight className="w-3 h-3 ml-auto text-[#6366F1]/60" />}
     </Link>
   );
 }
@@ -87,12 +87,12 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
       {/* Logo / Brand */}
       <div className="flex items-center justify-between px-4 py-5 border-b border-[#30363D]">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{backgroundColor: '#6366F1'}}>
             <GraduationCap className="w-4 h-4 text-white" />
           </div>
           <div>
             <p className="text-sm font-semibold text-[#E6EDF3] leading-tight">ARCA</p>
-            <p className="text-[10px] font-medium text-indigo-400 uppercase tracking-wider leading-tight">LMS</p>
+            <p className="text-[10px] font-medium text-[#818CF8] uppercase tracking-wider leading-tight">LMS</p>
           </div>
         </div>
         {onClose && (
@@ -120,8 +120,8 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
       {/* Footer del sidebar — info del usuario */}
       <div className="px-3 py-4 border-t border-[#30363D]">
         <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
-          <div className="w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-bold text-indigo-400">{userInitials}</span>
+          <div className="w-8 h-8 rounded-full bg-[#6366F1]/20 border border-[#6366F1]/30 flex items-center justify-center flex-shrink-0">
+            <span className="text-xs font-bold text-[#818CF8]">{userInitials}</span>
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-[#E6EDF3] truncate">{userName}</p>
@@ -305,7 +305,7 @@ function GlobalSearch() {
           }}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleInputKeyDown}
-          className="w-full h-9 pl-9 pr-20 rounded-lg bg-[#161B22] border border-[#30363D] text-sm text-[#E6EDF3] placeholder:text-[#6E7681] focus:outline-none focus:ring-1 focus:ring-indigo-500/50 focus:border-indigo-500/40 transition-colors"
+          className="w-full h-9 pl-9 pr-20 rounded-lg bg-[#161B22] border border-[#30363D] text-sm text-[#E6EDF3] placeholder:text-[#6E7681] focus:outline-none focus:ring-1 focus:ring-[#6366F1]/50 focus:border-[#6366F1]/40 transition-colors"
         />
         <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-[#1C2128] border border-[#30363D] text-[10px] font-medium text-[#6E7681] pointer-events-none select-none">
           Ctrl+K
@@ -338,7 +338,7 @@ function GlobalSearch() {
                     }`}
                   >
                     {item.type === "tarea" ? (
-                      <TaskIcon className="w-4 h-4 flex-shrink-0 text-indigo-400" />
+                      <TaskIcon className="w-4 h-4 flex-shrink-0 text-[#818CF8]" />
                     ) : (
                       <CourseIcon className="w-4 h-4 flex-shrink-0 text-sky-400" />
                     )}
@@ -349,7 +349,7 @@ function GlobalSearch() {
                     <span
                       className={`flex-shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded ${
                         item.type === "tarea"
-                          ? "bg-indigo-500/15 text-indigo-400"
+                          ? "bg-[#6366F1]/15 text-[#818CF8]"
                           : "bg-sky-500/15 text-sky-400"
                       }`}
                     >
@@ -398,7 +398,7 @@ function Header({ onMenuClick }: { onMenuClick: () => void }) {
       <div className="flex items-center gap-2">
         <button className="relative p-2 rounded-lg text-[#8B949E] hover:text-[#E6EDF3] hover:bg-[#1C2128] transition-colors">
           <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400" />
+          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#818CF8]" />
         </button>
 
         <div className="flex items-center gap-2.5 pl-2 ml-1 border-l border-[#30363D]">
@@ -406,8 +406,8 @@ function Header({ onMenuClick }: { onMenuClick: () => void }) {
             <p className="text-xs font-medium text-[#E6EDF3] leading-tight">{userName}</p>
             <p className="text-[10px] text-[#6E7681] leading-tight">Anáhuac</p>
           </div>
-          <div className="w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center">
-            <span className="text-xs font-bold text-indigo-400">{userInitials}</span>
+          <div className="w-8 h-8 rounded-full bg-[#6366F1]/20 border border-[#6366F1]/30 flex items-center justify-center">
+            <span className="text-xs font-bold text-[#818CF8]">{userInitials}</span>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   ClipboardList,
   Clock,
@@ -19,6 +19,9 @@ import {
   GraduationCap,
   Trophy,
   Info,
+  Star,
+  Timer,
+  Lock,
 } from "lucide-react";
 import Link from "next/link";
 import type { Assignment, CalendarEvent } from "@/types";
