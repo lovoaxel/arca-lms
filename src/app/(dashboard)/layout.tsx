@@ -62,14 +62,14 @@ function SidebarLink({ item, isActive, onClick }: {
         flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
         transition-all duration-150 group
         ${isActive
-          ? "bg-orange-500/15 text-orange-400 border border-orange-500/20"
-          : "text-slate-400 hover:text-slate-200 hover:bg-slate-800"
+          ? "bg-indigo-500/15 text-indigo-400 border border-indigo-500/20"
+          : "text-[#8B949E] hover:text-[#E6EDF3] hover:bg-[#1C2128]"
         }
       `}
     >
-      <Icon className={`w-4 h-4 flex-shrink-0 transition-transform duration-150 group-hover:scale-110 ${isActive ? "text-orange-400" : ""}`} />
+      <Icon className={`w-4 h-4 flex-shrink-0 transition-transform duration-150 group-hover:scale-110 ${isActive ? "text-indigo-400" : ""}`} />
       <span>{item.label}</span>
-      {isActive && <ChevronRight className="w-3 h-3 ml-auto text-orange-400/60" />}
+      {isActive && <ChevronRight className="w-3 h-3 ml-auto text-indigo-400/60" />}
     </Link>
   );
 }
@@ -83,20 +83,20 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
   const userInitials = getInitials(session?.user?.name) ?? FALLBACK_USER.initials;
 
   return (
-    <aside className="flex flex-col h-full bg-slate-900 border-r border-slate-800/80">
+    <aside className="flex flex-col h-full bg-[#0D1117] border-r border-[#30363D]">
       {/* Logo / Brand */}
-      <div className="flex items-center justify-between px-4 py-5 border-b border-slate-800/80">
+      <div className="flex items-center justify-between px-4 py-5 border-b border-[#30363D]">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center flex-shrink-0">
             <GraduationCap className="w-4 h-4 text-white" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-white leading-tight">ARCA</p>
-            <p className="text-[10px] font-medium text-orange-400 uppercase tracking-wider leading-tight">LMS</p>
+            <p className="text-sm font-semibold text-[#E6EDF3] leading-tight">ARCA</p>
+            <p className="text-[10px] font-medium text-indigo-400 uppercase tracking-wider leading-tight">LMS</p>
           </div>
         </div>
         {onClose && (
-          <button onClick={onClose} className="text-slate-500 hover:text-slate-300 lg:hidden">
+          <button onClick={onClose} className="text-[#6E7681] hover:text-[#E6EDF3] lg:hidden">
             <X className="w-5 h-5" />
           </button>
         )}
@@ -104,7 +104,7 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
 
       {/* Navegación principal */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-        <p className="px-3 mb-2 text-[10px] font-semibold text-slate-600 uppercase tracking-widest">
+        <p className="px-3 mb-2 text-[10px] font-semibold text-[#6E7681] uppercase tracking-widest">
           Menú
         </p>
         {NAV_ITEMS.map((item) => (
@@ -118,18 +118,18 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
       </nav>
 
       {/* Footer del sidebar — info del usuario */}
-      <div className="px-3 py-4 border-t border-slate-800/80">
+      <div className="px-3 py-4 border-t border-[#30363D]">
         <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
-          <div className="w-8 h-8 rounded-full bg-orange-500/20 border border-orange-500/30 flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-bold text-orange-400">{userInitials}</span>
+          <div className="w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center flex-shrink-0">
+            <span className="text-xs font-bold text-indigo-400">{userInitials}</span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-slate-200 truncate">{userName}</p>
-            <p className="text-[10px] text-slate-500 truncate">Semestre {FALLBACK_USER.semester}</p>
+            <p className="text-sm font-medium text-[#E6EDF3] truncate">{userName}</p>
+            <p className="text-[10px] text-[#6E7681] truncate">Semestre {FALLBACK_USER.semester}</p>
           </div>
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="text-slate-600 hover:text-slate-400 transition-colors"
+            className="text-[#6E7681] hover:text-[#8B949E] transition-colors"
             title="Cerrar sesión"
           >
             <LogOut className="w-4 h-4" />
@@ -292,7 +292,7 @@ function GlobalSearch() {
     <div ref={containerRef} className="hidden md:block relative w-full max-w-sm mx-4">
       {/* Input */}
       <div className="relative">
-        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6E7681] pointer-events-none" />
         <input
           ref={inputRef}
           type="text"
@@ -305,18 +305,18 @@ function GlobalSearch() {
           }}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleInputKeyDown}
-          className="w-full h-9 pl-9 pr-20 rounded-lg bg-slate-800/80 border border-slate-700/60 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/40 transition-colors"
+          className="w-full h-9 pl-9 pr-20 rounded-lg bg-[#161B22] border border-[#30363D] text-sm text-[#E6EDF3] placeholder:text-[#6E7681] focus:outline-none focus:ring-1 focus:ring-indigo-500/50 focus:border-indigo-500/40 transition-colors"
         />
-        <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-slate-700/60 border border-slate-600/50 text-[10px] font-medium text-slate-400 pointer-events-none select-none">
+        <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-[#1C2128] border border-[#30363D] text-[10px] font-medium text-[#6E7681] pointer-events-none select-none">
           Ctrl+K
         </kbd>
       </div>
 
       {/* Dropdown */}
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1.5 rounded-lg bg-slate-900 border border-slate-700/70 shadow-xl shadow-black/30 overflow-hidden z-50">
+        <div className="absolute top-full left-0 right-0 mt-1.5 rounded-lg bg-[#0D1117] border border-[#30363D] shadow-xl shadow-black/30 overflow-hidden z-50">
           {results.length === 0 ? (
-            <div className="px-4 py-6 text-center text-sm text-slate-500">
+            <div className="px-4 py-6 text-center text-sm text-[#6E7681]">
               Sin resultados para &ldquo;{query}&rdquo;
             </div>
           ) : (
@@ -333,23 +333,23 @@ function GlobalSearch() {
                     }}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors ${
                       index === activeIndex
-                        ? "bg-slate-800 text-slate-100"
-                        : "text-slate-300 hover:bg-slate-800/60"
+                        ? "bg-[#1C2128] text-[#E6EDF3]"
+                        : "text-[#8B949E] hover:bg-[#161B22]"
                     }`}
                   >
                     {item.type === "tarea" ? (
-                      <TaskIcon className="w-4 h-4 flex-shrink-0 text-orange-400" />
+                      <TaskIcon className="w-4 h-4 flex-shrink-0 text-indigo-400" />
                     ) : (
                       <CourseIcon className="w-4 h-4 flex-shrink-0 text-sky-400" />
                     )}
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium truncate">{item.title}</p>
-                      <p className="text-[11px] text-slate-500 truncate">{item.subtitle}</p>
+                      <p className="text-[11px] text-[#6E7681] truncate">{item.subtitle}</p>
                     </div>
                     <span
                       className={`flex-shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded ${
                         item.type === "tarea"
-                          ? "bg-orange-500/15 text-orange-400"
+                          ? "bg-indigo-500/15 text-indigo-400"
                           : "bg-sky-500/15 text-sky-400"
                       }`}
                     >
@@ -379,16 +379,16 @@ function Header({ onMenuClick }: { onMenuClick: () => void }) {
   )?.label ?? "Dashboard";
 
   return (
-    <header className="h-14 flex items-center justify-between px-4 lg:px-6 border-b border-slate-800/80 bg-slate-900/80 backdrop-blur-sm sticky top-0 z-10">
+    <header className="h-14 flex items-center justify-between px-4 lg:px-6 border-b border-[#30363D] bg-[#0D1117]/80 backdrop-blur-sm sticky top-0 z-10">
       {/* Izquierda */}
       <div className="flex items-center gap-3">
         <button
           onClick={onMenuClick}
-          className="lg:hidden text-slate-400 hover:text-slate-200 transition-colors"
+          className="lg:hidden text-[#8B949E] hover:text-[#E6EDF3] transition-colors"
         >
           <Menu className="w-5 h-5" />
         </button>
-        <h1 className="text-base font-semibold text-slate-100">{pageTitle}</h1>
+        <h1 className="text-base font-semibold text-[#E6EDF3]">{pageTitle}</h1>
       </div>
 
       {/* Centro — búsqueda global */}
@@ -396,18 +396,18 @@ function Header({ onMenuClick }: { onMenuClick: () => void }) {
 
       {/* Derecha */}
       <div className="flex items-center gap-2">
-        <button className="relative p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors">
+        <button className="relative p-2 rounded-lg text-[#8B949E] hover:text-[#E6EDF3] hover:bg-[#1C2128] transition-colors">
           <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-orange-400" />
+          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400" />
         </button>
 
-        <div className="flex items-center gap-2.5 pl-2 ml-1 border-l border-slate-800">
+        <div className="flex items-center gap-2.5 pl-2 ml-1 border-l border-[#30363D]">
           <div className="hidden sm:block text-right">
-            <p className="text-xs font-medium text-slate-300 leading-tight">{userName}</p>
-            <p className="text-[10px] text-slate-600 leading-tight">Anáhuac</p>
+            <p className="text-xs font-medium text-[#E6EDF3] leading-tight">{userName}</p>
+            <p className="text-[10px] text-[#6E7681] leading-tight">Anáhuac</p>
           </div>
-          <div className="w-8 h-8 rounded-full bg-orange-500/20 border border-orange-500/30 flex items-center justify-center">
-            <span className="text-xs font-bold text-orange-400">{userInitials}</span>
+          <div className="w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center">
+            <span className="text-xs font-bold text-indigo-400">{userInitials}</span>
           </div>
         </div>
       </div>
@@ -424,7 +424,7 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-slate-950 text-slate-100 overflow-hidden">
+    <div className="flex h-screen bg-[#0D1117] text-[#E6EDF3] overflow-hidden">
       {/* Sidebar desktop */}
       <div className="hidden lg:flex lg:w-56 xl:w-60 flex-shrink-0">
         <div className="w-full">
@@ -436,7 +436,7 @@ export default function DashboardLayout({
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div
-            className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm"
+            className="absolute inset-0 bg-[#0D1117]/70 backdrop-blur-sm"
             onClick={() => setSidebarOpen(false)}
           />
           <div className="absolute left-0 top-0 bottom-0 w-60 z-50">
@@ -448,7 +448,7 @@ export default function DashboardLayout({
       {/* Contenido principal */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Header onMenuClick={() => setSidebarOpen(true)} />
-        <main className="flex-1 overflow-y-auto bg-slate-950">
+        <main className="flex-1 overflow-y-auto bg-[#0D1117]">
           <div className="max-w-6xl mx-auto px-4 lg:px-6 py-6">
             {children}
           </div>

@@ -154,7 +154,7 @@ function formatDueDateShort(iso: string): { label: string; urgent: boolean } {
 function gradeColor(g: number): string {
   if (g >= 9) return "text-green-400";
   if (g >= 8) return "text-yellow-400";
-  if (g >= 7) return "text-orange-400";
+  if (g >= 7) return "text-indigo-400";
   return "text-red-400";
 }
 
@@ -171,7 +171,7 @@ function CourseCard({ course }: { course: Course }) {
     : { label: "Sin entregas próximas", urgent: false };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden hover:border-slate-700 transition-all duration-200 group flex flex-col">
+    <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden hover:border-[#30363D] transition-all duration-200 group flex flex-col">
       {/* Header de la card con gradiente */}
       <div className={`bg-gradient-to-br ${course.color} p-5 relative`}>
         <div className="flex items-start justify-between">
@@ -209,7 +209,7 @@ function CourseCard({ course }: { course: Course }) {
       {/* Cuerpo de la card */}
       <div className="flex-1 p-4 space-y-3">
         {/* Profesor */}
-        <div className="flex items-center gap-2 text-xs text-slate-500">
+        <div className="flex items-center gap-2 text-xs text-[#8B949E]">
           <Users className="w-3.5 h-3.5 flex-shrink-0" />
           <span className="truncate">{course.professor}</span>
         </div>
@@ -217,8 +217,8 @@ function CourseCard({ course }: { course: Course }) {
         {/* Calificación */}
         {course.currentGrade !== undefined && (
           <div className="flex items-center gap-2">
-            <Award className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" />
-            <span className="text-xs text-slate-500">Calificación actual:</span>
+            <Award className="w-3.5 h-3.5 text-[#6E7681] flex-shrink-0" />
+            <span className="text-xs text-[#8B949E]">Calificación actual:</span>
             <span className={`text-sm font-bold ${gradeColor(course.currentGrade)}`}>
               {course.currentGrade.toFixed(1)}
             </span>
@@ -227,33 +227,33 @@ function CourseCard({ course }: { course: Course }) {
 
         {/* Descripción */}
         {course.description && (
-          <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
+          <p className="text-xs text-[#6E7681] leading-relaxed line-clamp-2">
             {course.description}
           </p>
         )}
       </div>
 
       {/* Footer — próxima entrega */}
-      <div className="px-4 py-3 border-t border-slate-800 bg-slate-900/60">
+      <div className="px-4 py-3 border-t border-[#30363D] bg-[#161B22]/60">
         {course.nextDeadline ? (
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-start gap-2 min-w-0">
-              <Clock className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${urgent ? "text-red-400" : "text-slate-600"}`} />
+              <Clock className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 ${urgent ? "text-red-400" : "text-[#6E7681]"}`} />
               <div className="min-w-0">
-                <p className="text-[10px] text-slate-600 font-medium uppercase tracking-wide">
+                <p className="text-[10px] text-[#6E7681] font-medium uppercase tracking-wide">
                   Próxima entrega
                 </p>
-                <p className="text-xs text-slate-400 truncate">
+                <p className="text-xs text-[#8B949E] truncate">
                   {course.nextDeadline.title}
                 </p>
               </div>
             </div>
-            <span className={`text-xs font-semibold flex-shrink-0 ${urgent ? "text-red-400" : "text-slate-500"}`}>
+            <span className={`text-xs font-semibold flex-shrink-0 ${urgent ? "text-red-400" : "text-[#8B949E]"}`}>
               {dueLabel}
             </span>
           </div>
         ) : (
-          <p className="text-xs text-slate-600 text-center">Sin entregas próximas</p>
+          <p className="text-xs text-[#6E7681] text-center">Sin entregas próximas</p>
         )}
       </div>
     </div>
@@ -271,11 +271,11 @@ function QuickStat({
   icon: React.ComponentType<{ className?: string }>;
 }) {
   return (
-    <div className="flex items-center gap-3 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3">
-      <Icon className="w-4 h-4 text-orange-400 flex-shrink-0" />
+    <div className="flex items-center gap-3 bg-[#161B22] border border-[#30363D] rounded-xl px-4 py-3">
+      <Icon className="w-4 h-4 text-indigo-400 flex-shrink-0" />
       <div>
-        <p className="text-lg font-bold text-slate-100 leading-tight">{value}</p>
-        <p className="text-xs text-slate-500">{label}</p>
+        <p className="text-lg font-bold text-[#E6EDF3] leading-tight">{value}</p>
+        <p className="text-xs text-[#8B949E]">{label}</p>
       </div>
     </div>
   );
@@ -297,14 +297,14 @@ export default function CursosPage() {
       {/* ── Encabezado ─────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-slate-100">Mis Cursos</h2>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <h2 className="text-xl font-bold text-[#E6EDF3]">Mis Cursos</h2>
+          <p className="text-sm text-[#8B949E] mt-0.5">
             {MOCK_COURSES.length} materias · Semestre 3 · 2026-1
           </p>
         </div>
         <Link
           href="/calificaciones"
-          className="flex items-center gap-1.5 text-xs font-medium text-orange-400 hover:text-orange-300 transition-colors"
+          className="flex items-center gap-1.5 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
         >
           Ver calificaciones
           <ChevronRight className="w-3.5 h-3.5" />

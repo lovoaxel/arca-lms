@@ -224,9 +224,9 @@ const EVENT_TYPE_LABELS: Record<CalendarEvent["type"], string> = {
 
 const PRIORITY_STYLES: Record<Assignment["priority"], string> = {
   urgent: "text-red-400 bg-red-500/10 border-red-500/20",
-  high:   "text-orange-400 bg-orange-500/10 border-orange-500/20",
+  high:   "text-indigo-400 bg-indigo-500/10 border-indigo-500/20",
   medium: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
-  low:    "text-slate-400 bg-slate-700/40 border-slate-700",
+  low:    "text-[#8B949E] bg-[#30363D]/40 border-[#30363D]",
 };
 
 const PRIORITY_LABELS: Record<Assignment["priority"], string> = {
@@ -302,7 +302,7 @@ function getTodaysFocus(assignments: Assignment[], events: CalendarEvent[]): Foc
     return {
       title: examToday.title,
       courseName: examToday.courseName ?? "Curso",
-      courseColor: examToday.courseColor ?? "bg-slate-500",
+      courseColor: examToday.courseColor ?? "bg-[#8B949E]",
       dueDate: examToday.startTime ?? "Hoy",
       type: "exam",
       location: examToday.location,
@@ -329,7 +329,7 @@ function getTodaysFocus(assignments: Assignment[], events: CalendarEvent[]): Foc
   return {
     title: top.title,
     courseName: top.courseName,
-    courseColor: top.courseColor ?? "bg-slate-500",
+    courseColor: top.courseColor ?? "bg-[#8B949E]",
     dueDate: diffH <= 0 ? "Vencida" : diffH < 24 ? `Hoy · ${new Date(top.dueDate).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })}` : `En ${Math.floor(diffH / 24)} día${Math.floor(diffH / 24) !== 1 ? "s" : ""}`,
     type: "assignment",
     tip: tipMap[top.priority] ?? "Trabaja con foco y sin distracciones.",
@@ -343,33 +343,33 @@ function FocusDelDia({ assignments, events }: { assignments: Assignment[]; event
   const isExam = focus.type === "exam";
 
   return (
-    <div className={`rounded-xl border p-4 ${isExam ? "bg-red-500/5 border-red-500/25" : "bg-orange-500/5 border-orange-500/20"}`}>
+    <div className={`rounded-xl border p-4 ${isExam ? "bg-red-500/5 border-red-500/25" : "bg-indigo-500/5 border-indigo-500/20"}`}>
       <div className="flex items-center gap-2 mb-3">
-        <Target className={`w-4 h-4 ${isExam ? "text-red-400" : "text-orange-400"}`} />
-        <h3 className={`text-sm font-semibold ${isExam ? "text-red-400" : "text-orange-400"}`}>
+        <Target className={`w-4 h-4 ${isExam ? "text-red-400" : "text-indigo-400"}`} />
+        <h3 className={`text-sm font-semibold ${isExam ? "text-red-400" : "text-indigo-400"}`}>
           Focus del Día
         </h3>
-        <span className="text-xs text-slate-600 ml-auto">{isExam ? "📋 Examen" : "📌 Tarea prioritaria"}</span>
+        <span className="text-xs text-[#6E7681] ml-auto">{isExam ? "📋 Examen" : "📌 Tarea prioritaria"}</span>
       </div>
 
       <div className="flex items-start gap-3">
         <div className={`w-1 h-full min-h-[48px] rounded-full ${focus.courseColor} flex-shrink-0`} />
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-slate-100 leading-tight">{focus.title}</p>
+          <p className="text-sm font-semibold text-[#E6EDF3] leading-tight">{focus.title}</p>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
-            <span className="text-xs text-slate-500">{focus.courseName}</span>
+            <span className="text-xs text-[#8B949E]">{focus.courseName}</span>
             {focus.location && (
               <>
-                <span className="text-slate-700">·</span>
-                <span className="text-xs text-slate-600">{focus.location}</span>
+                <span className="text-[#30363D]">·</span>
+                <span className="text-xs text-[#6E7681]">{focus.location}</span>
               </>
             )}
-            <span className="text-slate-700">·</span>
-            <span className={`text-xs font-semibold ${isExam ? "text-red-400" : "text-orange-400"}`}>
+            <span className="text-[#30363D]">·</span>
+            <span className={`text-xs font-semibold ${isExam ? "text-red-400" : "text-indigo-400"}`}>
               {focus.dueDate}
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-2 italic">{focus.tip}</p>
+          <p className="text-xs text-[#8B949E] mt-2 italic">{focus.tip}</p>
         </div>
       </div>
     </div>
@@ -383,11 +383,11 @@ function WeeklyLoadMap({ assignments }: { assignments: Assignment[] }) {
   const getLoadStyle = (total: number, max: number) => {
     if (total === 0)
       return {
-        bar: "bg-slate-700",
-        badge: "text-slate-600",
-        card: "border-slate-800",
+        bar: "bg-[#30363D]",
+        badge: "text-[#6E7681]",
+        card: "border-[#30363D]",
         label: "Libre",
-        labelColor: "text-slate-600",
+        labelColor: "text-[#6E7681]",
       };
     const ratio = total / max;
     if (ratio > 0.6)
@@ -416,13 +416,13 @@ function WeeklyLoadMap({ assignments }: { assignments: Assignment[] }) {
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+    <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-[#30363D]">
         <div className="flex items-center gap-2">
-          <Activity className="w-4 h-4 text-orange-400" />
-          <h3 className="text-sm font-semibold text-slate-200">Carga académica</h3>
-          <span className="text-xs text-slate-600">— próximas 4 semanas</span>
+          <Activity className="w-4 h-4 text-indigo-400" />
+          <h3 className="text-sm font-semibold text-[#E6EDF3]">Carga académica</h3>
+          <span className="text-xs text-[#6E7681]">— próximas 4 semanas</span>
         </div>
       </div>
 
@@ -435,14 +435,14 @@ function WeeklyLoadMap({ assignments }: { assignments: Assignment[] }) {
           return (
             <div
               key={i}
-              className={`border rounded-xl p-3.5 flex flex-col gap-2 transition-all ${style.card} ${week.isCurrentWeek ? "ring-1 ring-orange-500/30" : ""}`}
+              className={`border rounded-xl p-3.5 flex flex-col gap-2 transition-all ${style.card} ${week.isCurrentWeek ? "ring-1 ring-indigo-500/30" : ""}`}
             >
               {/* Week label */}
               <div>
-                <p className={`text-[10px] font-bold uppercase tracking-wider ${week.isCurrentWeek ? "text-orange-400" : "text-slate-500"}`}>
+                <p className={`text-[10px] font-bold uppercase tracking-wider ${week.isCurrentWeek ? "text-indigo-400" : "text-[#8B949E]"}`}>
                   {week.label}
                 </p>
-                <p className="text-[9px] text-slate-700 leading-tight mt-0.5">{week.sublabel}</p>
+                <p className="text-[9px] text-[#30363D] leading-tight mt-0.5">{week.sublabel}</p>
               </div>
 
               {/* Bar */}
@@ -459,7 +459,7 @@ function WeeklyLoadMap({ assignments }: { assignments: Assignment[] }) {
                   <span className={`text-2xl font-black ${style.badge}`}>{week.total}</span>
                   <span className={`text-[10px] font-semibold ${style.labelColor}`}>{style.label}</span>
                 </div>
-                <p className="text-[10px] text-slate-600">
+                <p className="text-[10px] text-[#6E7681]">
                   {week.total === 0
                     ? "Sin entregas"
                     : week.total === 1
@@ -476,7 +476,7 @@ function WeeklyLoadMap({ assignments }: { assignments: Assignment[] }) {
       </div>
 
       <div className="px-5 pb-3">
-        <p className="text-[10px] text-slate-700">
+        <p className="text-[10px] text-[#30363D]">
           Basado en {assignments.filter((a) => a.status !== "submitted").length} tareas pendientes · Las barras son proporcionales entre sí
         </p>
       </div>
@@ -499,14 +499,14 @@ function StatCard({
   accentClass: string;
 }) {
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-start gap-4 hover:border-slate-700 transition-colors">
+    <div className="bg-[#161B22] border border-[#30363D] rounded-xl p-4 flex items-start gap-4 hover:border-[#30363D] transition-colors">
       <div className={`w-10 h-10 rounded-lg ${accentClass} flex items-center justify-center flex-shrink-0`}>
         <Icon className="w-5 h-5" />
       </div>
       <div>
-        <p className="text-2xl font-bold text-slate-100 leading-tight">{value}</p>
-        <p className="text-sm font-medium text-slate-400 leading-tight mt-0.5">{label}</p>
-        {sub && <p className="text-xs text-slate-600 mt-1">{sub}</p>}
+        <p className="text-2xl font-bold text-[#E6EDF3] leading-tight">{value}</p>
+        <p className="text-sm font-medium text-[#8B949E] leading-tight mt-0.5">{label}</p>
+        {sub && <p className="text-xs text-[#6E7681] mt-1">{sub}</p>}
       </div>
     </div>
   );
@@ -547,20 +547,20 @@ export default function DashboardPage() {
       <section>
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-sm text-slate-500 mb-1">
+            <p className="text-sm text-[#8B949E] mb-1">
               {new Date().toLocaleDateString("es-MX", {
                 weekday: "long",
                 day: "numeric",
                 month: "long",
               })}
             </p>
-            <h2 className="text-2xl font-bold text-slate-100">
+            <h2 className="text-2xl font-bold text-[#E6EDF3]">
               {greeting},{" "}
-              <span className="text-orange-400">Axel</span> 👋
+              <span className="text-indigo-400">Axel</span> 👋
             </h2>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-sm text-[#8B949E] mt-1">
               Tienes{" "}
-              <span className="text-orange-400 font-semibold">
+              <span className="text-indigo-400 font-semibold">
                 {stats.pendingAssignments} tareas pendientes
               </span>{" "}
               esta semana.
@@ -570,29 +570,29 @@ export default function DashboardPage() {
       </section>
 
       {/* ── Progreso del Semestre ──────────────────────────── */}
-      <section className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+      <section className="bg-[#161B22] border border-[#30363D] rounded-xl p-5">
         <div className="flex items-center gap-2 mb-3">
-          <GraduationCap className="w-4 h-4 text-orange-400" />
-          <h3 className="text-sm font-semibold text-slate-200">Progreso del semestre</h3>
-          <span className="text-xs text-slate-600 ml-auto">
+          <GraduationCap className="w-4 h-4 text-indigo-400" />
+          <h3 className="text-sm font-semibold text-[#E6EDF3]">Progreso del semestre</h3>
+          <span className="text-xs text-[#6E7681] ml-auto">
             Ene 20 – May 31, 2026
           </span>
         </div>
-        <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden">
+        <div className="w-full h-3 bg-[#30363D] rounded-full overflow-hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-orange-500 to-orange-400 transition-all duration-700"
+            className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-indigo-400 transition-all duration-700"
             style={{ width: `${semesterProgress.percentage}%` }}
           />
         </div>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-[#8B949E]">
             {semesterProgress.daysPassed} de {semesterProgress.totalDays} días transcurridos
           </span>
-          <span className="text-sm font-bold text-orange-400">
+          <span className="text-sm font-bold text-indigo-400">
             {semesterProgress.percentage.toFixed(1)}%
           </span>
         </div>
-        <p className="text-xs text-slate-600 mt-1">
+        <p className="text-xs text-[#6E7681] mt-1">
           {semesterProgress.daysLeft > 0
             ? `Faltan ${semesterProgress.daysLeft} días para terminar el semestre.`
             : "El semestre ha finalizado."}
@@ -633,9 +633,9 @@ export default function DashboardPage() {
                 ? "¡Felicidades!"
                 : "Sigue adelante"}
             </p>
-            <p className="text-xs text-slate-400 mt-1">{motivation.message}</p>
-            <p className="text-xs text-slate-600 mt-1">
-              Promedio actual: <span className="font-semibold text-slate-300">{stats.overallAverage.toFixed(1)}</span>/10
+            <p className="text-xs text-[#8B949E] mt-1">{motivation.message}</p>
+            <p className="text-xs text-[#6E7681] mt-1">
+              Promedio actual: <span className="font-semibold text-[#E6EDF3]">{stats.overallAverage.toFixed(1)}</span>/10
             </p>
           </div>
         </div>
@@ -661,8 +661,8 @@ export default function DashboardPage() {
                   <div key={a.id} className="flex items-center justify-between gap-3 py-1.5 border-b border-red-500/10 last:border-0">
                     <div className="flex items-center gap-2 min-w-0">
                       <div className={`w-1.5 h-1.5 rounded-full ${a.courseColor} flex-shrink-0`} />
-                      <span className="text-sm text-slate-300 truncate">{a.title}</span>
-                      <span className="text-xs text-slate-600 hidden sm:inline">— {a.courseName}</span>
+                      <span className="text-sm text-[#E6EDF3] truncate">{a.title}</span>
+                      <span className="text-xs text-[#6E7681] hidden sm:inline">— {a.courseName}</span>
                     </div>
                     <span className="text-xs font-semibold text-red-400 flex-shrink-0">{label}</span>
                   </div>
@@ -691,9 +691,9 @@ export default function DashboardPage() {
             </div>
             <div className="flex flex-wrap gap-3">
               {LOW_GRADE_COURSES.map((c) => (
-                <div key={c.name} className="flex items-center gap-2 px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg">
+                <div key={c.name} className="flex items-center gap-2 px-3 py-2 bg-[#161B22] border border-[#30363D] rounded-lg">
                   <div className={`w-2 h-2 rounded-full ${c.color}`} />
-                  <span className="text-xs text-slate-300">{c.name}</span>
+                  <span className="text-xs text-[#E6EDF3]">{c.name}</span>
                   <span className={`text-xs font-bold ${c.grade < 6 ? "text-red-400" : "text-yellow-400"}`}>
                     {c.grade.toFixed(1)}/10
                   </span>
@@ -717,7 +717,7 @@ export default function DashboardPage() {
           label="Tareas pendientes"
           value={stats.pendingAssignments}
           sub="Esta semana"
-          accentClass="bg-orange-500/15 text-orange-400"
+          accentClass="bg-indigo-500/15 text-indigo-400"
         />
         <StatCard
           icon={Clock}
@@ -744,90 +744,93 @@ export default function DashboardPage() {
 
       {/* ── Quick Actions ───────────────────────────────────── */}
       <section>
-        <p className="text-xs font-semibold text-slate-600 uppercase tracking-widest mb-3">Acciones rápidas</p>
+        <p className="text-xs font-semibold text-[#6E7681] uppercase tracking-widest mb-3">Acciones rápidas</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Link
             href="/tareas"
-            className="flex items-center gap-3 p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-orange-500/30 hover:bg-orange-500/5 transition-all group"
+            className="flex items-center gap-3 p-4 bg-[#161B22] border border-[#30363D] rounded-xl hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-all group"
           >
-            <div className="w-9 h-9 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-orange-500/20 transition-colors">
-              <ClipboardList className="w-4.5 h-4.5 text-orange-400" />
+            <div className="w-9 h-9 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-500/20 transition-colors">
+              <ClipboardList className="w-4.5 h-4.5 text-indigo-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-200">Ver tareas</p>
-              <p className="text-xs text-slate-600">{stats.pendingAssignments} pendientes</p>
+              <p className="text-sm font-medium text-[#E6EDF3]">Ver tareas</p>
+              <p className="text-xs text-[#6E7681]">{stats.pendingAssignments} pendientes</p>
             </div>
-            <ArrowRight className="w-4 h-4 text-slate-700 ml-auto group-hover:text-orange-400 transition-colors" />
+            <ArrowRight className="w-4 h-4 text-[#30363D] ml-auto group-hover:text-indigo-400 transition-colors" />
           </Link>
 
           <Link
             href="/calendario"
-            className="flex items-center gap-3 p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-blue-500/30 hover:bg-blue-500/5 transition-all group"
+            className="flex items-center gap-3 p-4 bg-[#161B22] border border-[#30363D] rounded-xl hover:border-blue-500/30 hover:bg-blue-500/5 transition-all group"
           >
             <div className="w-9 h-9 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500/20 transition-colors">
               <CalendarDays className="w-4.5 h-4.5 text-blue-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-200">Ver calendario</p>
-              <p className="text-xs text-slate-600">Entregas del semestre</p>
+              <p className="text-sm font-medium text-[#E6EDF3]">Ver calendario</p>
+              <p className="text-xs text-[#6E7681]">Entregas del semestre</p>
             </div>
-            <ArrowRight className="w-4 h-4 text-slate-700 ml-auto group-hover:text-blue-400 transition-colors" />
+            <ArrowRight className="w-4 h-4 text-[#30363D] ml-auto group-hover:text-blue-400 transition-colors" />
           </Link>
 
           <Link
             href="/calificaciones"
-            className="flex items-center gap-3 p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-green-500/30 hover:bg-green-500/5 transition-all group"
+            className="flex items-center gap-3 p-4 bg-[#161B22] border border-[#30363D] rounded-xl hover:border-green-500/30 hover:bg-green-500/5 transition-all group"
           >
             <div className="w-9 h-9 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-green-500/20 transition-colors">
               <BarChart3 className="w-4.5 h-4.5 text-green-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-200">Calificaciones</p>
-              <p className="text-xs text-slate-600">2 materias en alerta</p>
+              <p className="text-sm font-medium text-[#E6EDF3]">Calificaciones</p>
+              <p className="text-xs text-[#6E7681]">2 materias en alerta</p>
             </div>
-            <ArrowRight className="w-4 h-4 text-slate-700 ml-auto group-hover:text-green-400 transition-colors" />
+            <ArrowRight className="w-4 h-4 text-[#30363D] ml-auto group-hover:text-green-400 transition-colors" />
           </Link>
         </div>
       </section>
 
+      {/* ── Carga Semanal ───────────────────────────────────── */}
+      <WeeklyLoadMap assignments={MOCK_URGENT_ASSIGNMENTS} />
+
       {/* ── Grid: Tareas + Eventos ──────────────────────────── */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Tareas urgentes */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+        <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[#30363D]">
             <div className="flex items-center gap-2">
-              <Flame className="w-4 h-4 text-orange-400" />
-              <h3 className="text-sm font-semibold text-slate-200">Tareas urgentes</h3>
+              <Flame className="w-4 h-4 text-indigo-400" />
+              <h3 className="text-sm font-semibold text-[#E6EDF3]">Tareas urgentes</h3>
             </div>
             <Link
               href="/tareas"
-              className="flex items-center gap-1 text-xs text-slate-500 hover:text-orange-400 transition-colors"
+              className="flex items-center gap-1 text-xs text-[#8B949E] hover:text-indigo-400 transition-colors"
             >
               Ver todas <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
 
-          <ul className="divide-y divide-slate-800/60">
+          <ul className="divide-y divide-[#30363D]/60">
             {MOCK_URGENT_ASSIGNMENTS.map((assignment) => {
               const { label: dueLabel, isUrgent } = formatDueDate(assignment.dueDate);
               return (
-                <li key={assignment.id} className="px-5 py-3.5 hover:bg-slate-800/40 transition-colors">
+                <li key={assignment.id} className="px-5 py-3.5 hover:bg-[#30363D]/40 transition-colors">
                   <div className="flex items-start gap-3">
                     <div className="mt-0.5 flex-shrink-0">
                       {assignment.status === "submitted" ? (
                         <CheckCircle2 className="w-4 h-4 text-green-500" />
                       ) : (
-                        <AlertCircle className={`w-4 h-4 ${assignment.priority === "urgent" ? "text-red-400" : assignment.priority === "high" ? "text-orange-400" : "text-yellow-400"}`} />
+                        <AlertCircle className={`w-4 h-4 ${assignment.priority === "urgent" ? "text-red-400" : assignment.priority === "high" ? "text-indigo-400" : "text-yellow-400"}`} />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-200 truncate">
+                      <p className="text-sm font-medium text-[#E6EDF3] truncate">
                         {assignment.title}
                       </p>
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
                         <div className="flex items-center gap-1.5">
                           <span className={`w-1.5 h-1.5 rounded-full ${assignment.courseColor}`} />
-                          <span className="text-xs text-slate-500">{assignment.courseName}</span>
+                          <span className="text-xs text-[#8B949E]">{assignment.courseName}</span>
                         </div>
                         <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${PRIORITY_STYLES[assignment.priority]}`}>
                           {PRIORITY_LABELS[assignment.priority]}
@@ -835,7 +838,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="flex-shrink-0 text-right">
-                      <span className={`text-xs font-medium ${isUrgent ? "text-red-400" : "text-slate-500"}`}>
+                      <span className={`text-xs font-medium ${isUrgent ? "text-red-400" : "text-[#8B949E]"}`}>
                         {dueLabel}
                       </span>
                     </div>
@@ -847,44 +850,44 @@ export default function DashboardPage() {
         </div>
 
         {/* Próximos eventos */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+        <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[#30363D]">
             <div className="flex items-center gap-2">
-              <CalendarDays className="w-4 h-4 text-orange-400" />
-              <h3 className="text-sm font-semibold text-slate-200">Próximos eventos</h3>
+              <CalendarDays className="w-4 h-4 text-indigo-400" />
+              <h3 className="text-sm font-semibold text-[#E6EDF3]">Próximos eventos</h3>
             </div>
             <Link
               href="/calendario"
-              className="flex items-center gap-1 text-xs text-slate-500 hover:text-orange-400 transition-colors"
+              className="flex items-center gap-1 text-xs text-[#8B949E] hover:text-indigo-400 transition-colors"
             >
               Ver calendario <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
 
-          <ul className="divide-y divide-slate-800/60">
+          <ul className="divide-y divide-[#30363D]/60">
             {MOCK_CALENDAR_EVENTS.map((event) => {
               const dateLabel = formatEventDate(event.date, event.startTime);
               return (
-                <li key={event.id} className="px-5 py-3.5 hover:bg-slate-800/40 transition-colors">
+                <li key={event.id} className="px-5 py-3.5 hover:bg-[#30363D]/40 transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className={`w-1 h-10 rounded-full ${event.courseColor ?? "bg-slate-600"} flex-shrink-0`} />
+                    <div className={`w-1 h-10 rounded-full ${event.courseColor ?? "bg-[#6E7681]"} flex-shrink-0`} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-200 truncate">
+                      <p className="text-sm font-medium text-[#E6EDF3] truncate">
                         {event.title}
                       </p>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-xs text-slate-500">{event.courseName}</span>
-                        <span className="text-slate-700">·</span>
-                        <span className="text-[10px] font-medium text-slate-600 uppercase tracking-wide">
+                        <span className="text-xs text-[#8B949E]">{event.courseName}</span>
+                        <span className="text-[#30363D]">·</span>
+                        <span className="text-[10px] font-medium text-[#6E7681] uppercase tracking-wide">
                           {EVENT_TYPE_LABELS[event.type]}
                         </span>
                       </div>
                       {event.location && (
-                        <p className="text-xs text-slate-600 mt-0.5 truncate">{event.location}</p>
+                        <p className="text-xs text-[#6E7681] mt-0.5 truncate">{event.location}</p>
                       )}
                     </div>
                     <div className="flex-shrink-0 text-right">
-                      <span className="text-xs text-slate-500">{dateLabel}</span>
+                      <span className="text-xs text-[#8B949E]">{dateLabel}</span>
                     </div>
                   </div>
                 </li>

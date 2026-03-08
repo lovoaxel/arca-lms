@@ -124,7 +124,7 @@ function calcOverallAverage(courses: CourseGrade[]): number {
 const TARGET_OPTIONS = [
   { label: "Pasar",  value: 6.0, color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/30" },
   { label: "Bien",   value: 7.0, color: "text-blue-400   bg-blue-500/10   border-blue-500/30"   },
-  { label: "Alto",   value: 8.0, color: "text-orange-400 bg-orange-500/10 border-orange-500/30" },
+  { label: "Alto",   value: 8.0, color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/30" },
   { label: "9.0",    value: 9.0, color: "text-green-400  bg-green-500/10  border-green-500/30"  },
 ];
 
@@ -134,16 +134,16 @@ function GradeTargetCalculator({ courses }: { courses: CourseGrade[] }) {
   );
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+    <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-800">
-        <Calculator className="w-4 h-4 text-orange-400" />
-        <h3 className="text-sm font-semibold text-slate-200">Calculadora de nota mínima</h3>
-        <span className="text-xs text-slate-600 ml-1">— ¿Cuánto necesito para llegar a mi meta?</span>
+      <div className="flex items-center gap-2 px-5 py-4 border-b border-[#30363D]">
+        <Calculator className="w-4 h-4 text-indigo-400" />
+        <h3 className="text-sm font-semibold text-[#E6EDF3]">Calculadora de nota mínima</h3>
+        <span className="text-xs text-[#6E7681] ml-1">— ¿Cuánto necesito para llegar a mi meta?</span>
       </div>
 
       {/* Rows */}
-      <div className="divide-y divide-slate-800/50">
+      <div className="divide-y divide-[#30363D]/50">
         {courses.map((course) => {
           const target = targets[course.id];
           const diff = target - course.currentGrade;
@@ -168,8 +168,8 @@ function GradeTargetCalculator({ courses }: { courses: CourseGrade[] }) {
                 <div className="flex items-center gap-2 flex-1 min-w-[160px]">
                   <div className={`w-1.5 h-8 rounded-full ${course.color} flex-shrink-0`} />
                   <div>
-                    <p className="text-sm font-medium text-slate-200 leading-tight">{course.name}</p>
-                    <p className="text-xs text-slate-600 leading-tight">
+                    <p className="text-sm font-medium text-[#E6EDF3] leading-tight">{course.name}</p>
+                    <p className="text-xs text-[#6E7681] leading-tight">
                       Actual:{" "}
                       <span className={`font-semibold ${course.currentGrade < 6 ? "text-red-400" : course.currentGrade < 8 ? "text-yellow-400" : "text-green-400"}`}>
                         {course.currentGrade.toFixed(1)}
@@ -180,7 +180,7 @@ function GradeTargetCalculator({ courses }: { courses: CourseGrade[] }) {
 
                 {/* Target buttons */}
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-slate-600 mr-0.5">Meta:</span>
+                  <span className="text-[10px] text-[#6E7681] mr-0.5">Meta:</span>
                   {TARGET_OPTIONS.map((opt) => {
                     const reached = course.currentGrade >= opt.value;
                     const selected = targets[course.id] === opt.value;
@@ -193,7 +193,7 @@ function GradeTargetCalculator({ courses }: { courses: CourseGrade[] }) {
                             ? "text-green-400 bg-green-500/10 border-green-500/20 cursor-default"
                             : selected
                             ? opt.color
-                            : "text-slate-500 border-slate-700 hover:border-slate-600 hover:text-slate-400"
+                            : "text-[#8B949E] border-[#30363D] hover:border-[#6E7681] hover:text-[#8B949E]"
                         }`}
                       >
                         {reached && selected ? "✓" : ""}{opt.label}
@@ -213,9 +213,9 @@ function GradeTargetCalculator({ courses }: { courses: CourseGrade[] }) {
                   ) : neededOnRemaining < 0 ? (
                     <span className="text-xs text-green-400 font-semibold">✓ Ya tienes garantizado ese promedio</span>
                   ) : (
-                    <span className="text-xs text-slate-300">
+                    <span className="text-xs text-[#E6EDF3]">
                       Necesitas{" "}
-                      <span className={`font-bold text-sm ${neededOnRemaining >= 9 ? "text-orange-400" : "text-blue-400"}`}>
+                      <span className={`font-bold text-sm ${neededOnRemaining >= 9 ? "text-indigo-400" : "text-blue-400"}`}>
                         {neededOnRemaining.toFixed(1)}/10
                       </span>
                       {" "}en actividades restantes
@@ -230,12 +230,12 @@ function GradeTargetCalculator({ courses }: { courses: CourseGrade[] }) {
                   {course.categories
                     .filter((cat) => cat.grade === 0)
                     .map((cat) => (
-                      <span key={cat.name} className="text-[10px] text-slate-600 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+                      <span key={cat.name} className="text-[10px] text-[#6E7681] bg-[#30363D] px-2 py-0.5 rounded border border-[#30363D]">
                         {cat.name} ({cat.weight}% del curso)
                       </span>
                     ))}
                   {course.categories.filter((c) => c.grade === 0).length === 0 && (
-                    <span className="text-[10px] text-slate-700 italic">Todas las categorías ya tienen calificación</span>
+                    <span className="text-[10px] text-[#6E7681] italic">Todas las categorías ya tienen calificación</span>
                   )}
                 </div>
               )}
@@ -244,8 +244,8 @@ function GradeTargetCalculator({ courses }: { courses: CourseGrade[] }) {
         })}
       </div>
 
-      <div className="px-5 py-3 bg-slate-800/30 border-t border-slate-800/60">
-        <p className="text-[10px] text-slate-700">
+      <div className="px-5 py-3 bg-[#1C2128] border-t border-[#30363D]/60">
+        <p className="text-[10px] text-[#6E7681]">
           <ChevronRight className="inline w-3 h-3 mb-0.5" /> El cálculo usa el peso de categorías sin calificar. Activa el scraper para datos reales.
         </p>
       </div>
@@ -305,17 +305,17 @@ function CalculadoraPromedio() {
   const totalCreditos = materias.reduce((s, m) => s + m.creditos, 0);
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+    <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-800">
-        <Calculator className="w-4 h-4 text-orange-400" />
-        <h3 className="text-sm font-semibold text-slate-200">Calculadora de Promedio Ponderado</h3>
-        <span className="text-xs text-slate-600 ml-1">— Ajusta calificaciones esperadas y créditos</span>
+      <div className="flex items-center gap-2 px-5 py-4 border-b border-[#30363D]">
+        <Calculator className="w-4 h-4 text-indigo-400" />
+        <h3 className="text-sm font-semibold text-[#E6EDF3]">Calculadora de Promedio Ponderado</h3>
+        <span className="text-xs text-[#6E7681] ml-1">— Ajusta calificaciones esperadas y créditos</span>
       </div>
 
       <div className="p-5 space-y-4">
         {/* Table header */}
-        <div className="grid grid-cols-[1fr_80px_100px_40px] gap-3 text-[10px] uppercase tracking-wider text-slate-600 font-semibold px-1">
+        <div className="grid grid-cols-[1fr_80px_100px_40px] gap-3 text-[10px] uppercase tracking-wider text-[#6E7681] font-semibold px-1">
           <span>Materia</span>
           <span className="text-center">Créditos</span>
           <span className="text-center">Calificación</span>
@@ -329,12 +329,12 @@ function CalculadoraPromedio() {
             return (
               <div
                 key={m.id}
-                className="grid grid-cols-[1fr_80px_100px_40px] gap-3 items-center bg-slate-800/30 rounded-lg px-3 py-2.5 border border-slate-800 hover:border-slate-700 transition-colors"
+                className="grid grid-cols-[1fr_80px_100px_40px] gap-3 items-center bg-[#1C2128] rounded-lg px-3 py-2.5 border border-[#30363D] hover:border-[#30363D] transition-colors"
               >
                 {/* Name */}
                 <div className="flex items-center gap-2 min-w-0">
                   <div className={`w-1.5 h-6 rounded-full ${m.color} flex-shrink-0`} />
-                  <span className="text-sm text-slate-300 truncate">{m.name}</span>
+                  <span className="text-sm text-[#E6EDF3] truncate">{m.name}</span>
                 </div>
 
                 {/* Creditos */}
@@ -344,7 +344,7 @@ function CalculadoraPromedio() {
                   max={20}
                   value={m.creditos}
                   onChange={(e) => handleCreditosChange(m.id, e.target.value)}
-                  className="w-full text-center text-sm font-semibold text-slate-200 bg-slate-800 border border-slate-700 rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full text-center text-sm font-semibold text-[#E6EDF3] bg-[#30363D] border border-[#30363D] rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 focus:border-indigo-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
 
                 {/* Calificacion */}
@@ -355,7 +355,7 @@ function CalculadoraPromedio() {
                   step={0.1}
                   value={m.calificacion}
                   onChange={(e) => handleGradeChange(m.id, e.target.value)}
-                  className={`w-full text-center text-sm font-bold bg-slate-800 border rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-orange-500/50 focus:border-orange-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+                  className={`w-full text-center text-sm font-bold bg-[#30363D] border rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 focus:border-indigo-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
                     m.calificacion >= 8
                       ? "text-green-400 border-green-500/30"
                       : m.calificacion >= 6
@@ -383,16 +383,16 @@ function CalculadoraPromedio() {
         }`}>
           <div className="flex items-center gap-4">
             {/* Traffic light */}
-            <div className="flex flex-col items-center gap-1.5 p-2 bg-slate-900 rounded-lg border border-slate-800">
+            <div className="flex flex-col items-center gap-1.5 p-2 bg-[#161B22] rounded-lg border border-[#30363D]">
               <div className={`w-4 h-4 rounded-full ${promedio < 6 ? "bg-red-500 ring-2 ring-red-500/40" : "bg-red-500/20"}`} />
               <div className={`w-4 h-4 rounded-full ${promedio >= 6 && promedio < 8 ? "bg-yellow-500 ring-2 ring-yellow-500/40" : "bg-yellow-500/20"}`} />
               <div className={`w-4 h-4 rounded-full ${promedio >= 8 ? "bg-green-500 ring-2 ring-green-500/40" : "bg-green-500/20"}`} />
             </div>
 
             <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Promedio Ponderado</p>
+              <p className="text-xs text-[#8B949E] uppercase tracking-wider font-semibold">Promedio Ponderado</p>
               <p className={`text-4xl font-black ${tl.text}`}>{promedio.toFixed(2)}</p>
-              <p className="text-xs text-slate-600">{totalCreditos} créditos totales</p>
+              <p className="text-xs text-[#6E7681]">{totalCreditos} créditos totales</p>
             </div>
           </div>
 
@@ -406,15 +406,15 @@ function CalculadoraPromedio() {
             }`}>
               {tl.label}
             </span>
-            <p className="text-[10px] text-slate-600 mt-1">
+            <p className="text-[10px] text-[#6E7681] mt-1">
               {promedio >= 8 ? "Sigue así, vas excelente" : promedio >= 6 ? "Puedes mejorar en algunas materias" : "Necesitas subir tus calificaciones"}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="px-5 py-3 bg-slate-800/30 border-t border-slate-800/60">
-        <p className="text-[10px] text-slate-700">
+      <div className="px-5 py-3 bg-[#1C2128] border-t border-[#30363D]/60">
+        <p className="text-[10px] text-[#6E7681]">
           <ChevronRight className="inline w-3 h-3 mb-0.5" /> Ajusta las calificaciones esperadas para simular tu promedio final. Los créditos son editables.
         </p>
       </div>
@@ -474,17 +474,17 @@ function CalculadoraPromedioPesos() {
   const pesosValidos = totalPeso === 100;
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+    <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-2 px-5 py-4 border-b border-slate-800">
+      <div className="flex items-center gap-2 px-5 py-4 border-b border-[#30363D]">
         <Calculator className="w-4 h-4 text-emerald-400" />
-        <h3 className="text-sm font-semibold text-slate-200">Calculadora de Promedio</h3>
-        <span className="text-xs text-slate-600 ml-1">— Pesos porcentuales (deben sumar 100%)</span>
+        <h3 className="text-sm font-semibold text-[#E6EDF3]">Calculadora de Promedio</h3>
+        <span className="text-xs text-[#6E7681] ml-1">— Pesos porcentuales (deben sumar 100%)</span>
       </div>
 
       <div className="p-5 space-y-4">
         {/* Table header */}
-        <div className="grid grid-cols-[1fr_90px_110px_44px] gap-3 text-[10px] uppercase tracking-wider text-slate-600 font-semibold px-1">
+        <div className="grid grid-cols-[1fr_90px_110px_44px] gap-3 text-[10px] uppercase tracking-wider text-[#6E7681] font-semibold px-1">
           <span>Materia</span>
           <span className="text-center">Peso (%)</span>
           <span className="text-center">Calificación</span>
@@ -498,12 +498,12 @@ function CalculadoraPromedioPesos() {
             return (
               <div
                 key={m.id}
-                className="grid grid-cols-[1fr_90px_110px_44px] gap-3 items-center bg-slate-800/30 rounded-lg px-3 py-2.5 border border-slate-800 hover:border-slate-700 transition-colors"
+                className="grid grid-cols-[1fr_90px_110px_44px] gap-3 items-center bg-[#1C2128] rounded-lg px-3 py-2.5 border border-[#30363D] hover:border-[#30363D] transition-colors"
               >
                 {/* Name */}
                 <div className="flex items-center gap-2 min-w-0">
                   <div className={`w-1.5 h-6 rounded-full ${m.color} flex-shrink-0`} />
-                  <span className="text-sm text-slate-300 truncate">{m.name}</span>
+                  <span className="text-sm text-[#E6EDF3] truncate">{m.name}</span>
                 </div>
 
                 {/* Peso */}
@@ -513,7 +513,7 @@ function CalculadoraPromedioPesos() {
                   max={100}
                   value={m.peso}
                   onChange={(e) => handlePesoChange(m.id, e.target.value)}
-                  className="w-full text-center text-sm font-semibold text-slate-200 bg-slate-800 border border-slate-700 rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full text-center text-sm font-semibold text-[#E6EDF3] bg-[#30363D] border border-[#30363D] rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
 
                 {/* Calificacion esperada (0-100) */}
@@ -524,7 +524,7 @@ function CalculadoraPromedioPesos() {
                   step={1}
                   value={m.calificacionEsperada}
                   onChange={(e) => handleGradeChange(m.id, e.target.value)}
-                  className={`w-full text-center text-sm font-bold bg-slate-800 border rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+                  className={`w-full text-center text-sm font-bold bg-[#30363D] border rounded-md py-1 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
                     m.calificacionEsperada >= 90
                       ? "text-green-400 border-green-500/30"
                       : m.calificacionEsperada >= 70
@@ -562,16 +562,16 @@ function CalculadoraPromedioPesos() {
         }`}>
           <div className="flex items-center gap-4">
             {/* Semaforo visual */}
-            <div className="flex flex-col items-center gap-1.5 p-2 bg-slate-900 rounded-lg border border-slate-800">
+            <div className="flex flex-col items-center gap-1.5 p-2 bg-[#161B22] rounded-lg border border-[#30363D]">
               <div className={`w-4 h-4 rounded-full ${promedio < 70 ? "bg-red-500 ring-2 ring-red-500/40" : "bg-red-500/20"}`} />
               <div className={`w-4 h-4 rounded-full ${promedio >= 70 && promedio < 90 ? "bg-yellow-500 ring-2 ring-yellow-500/40" : "bg-yellow-500/20"}`} />
               <div className={`w-4 h-4 rounded-full ${promedio >= 90 ? "bg-green-500 ring-2 ring-green-500/40" : "bg-green-500/20"}`} />
             </div>
 
             <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Promedio Ponderado</p>
+              <p className="text-xs text-[#8B949E] uppercase tracking-wider font-semibold">Promedio Ponderado</p>
               <p className={`text-4xl font-black ${sem.text}`}>{promedio.toFixed(2)}</p>
-              <p className="text-xs text-slate-600">Escala 0–100 · {totalPeso}% asignado</p>
+              <p className="text-xs text-[#6E7681]">Escala 0–100 · {totalPeso}% asignado</p>
             </div>
           </div>
 
@@ -585,15 +585,15 @@ function CalculadoraPromedioPesos() {
             }`}>
               {sem.label}
             </span>
-            <p className="text-[10px] text-slate-600 mt-1">
+            <p className="text-[10px] text-[#6E7681] mt-1">
               {promedio >= 90 ? "Excelente desempeno, sigue asi" : promedio >= 70 ? "Puedes mejorar en algunas materias" : "Necesitas subir tus calificaciones urgentemente"}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="px-5 py-3 bg-slate-800/30 border-t border-slate-800/60">
-        <p className="text-[10px] text-slate-700">
+      <div className="px-5 py-3 bg-[#1C2128] border-t border-[#30363D]/60">
+        <p className="text-[10px] text-[#6E7681]">
           <ChevronRight className="inline w-3 h-3 mb-0.5" /> Ajusta los pesos (%) y calificaciones esperadas (0-100) para simular tu promedio. Los pesos deben sumar 100%.
         </p>
       </div>
@@ -627,10 +627,10 @@ function getRisk(grade: number, trend: CourseGrade["trend"]): RiskLevel {
   if (grade < 7.5 && trend === "down") {
     return {
       label: "Riesgo moderado",
-      color: "text-orange-400",
-      bg: "bg-orange-500/10",
-      border: "border-orange-500/25",
-      dot: "bg-orange-500",
+      color: "text-indigo-400",
+      bg: "bg-indigo-500/10",
+      border: "border-indigo-500/25",
+      dot: "bg-indigo-500",
       advice: "Calificación bajando. Revisa tu rendimiento antes del siguiente parcial.",
     };
   }
@@ -661,25 +661,25 @@ function AcademicRiskPanel({ courses }: { courses: CourseGrade[] }) {
   const safe = courses.filter((c) => c.currentGrade >= 7.5);
 
   const overallRisk = critical.length > 0 ? "Crítico" : moderate.length > 0 ? "Moderado" : attention.length > 0 ? "Atención" : "Saludable";
-  const overallColor = critical.length > 0 ? "text-red-400" : moderate.length > 0 ? "text-orange-400" : attention.length > 0 ? "text-yellow-400" : "text-green-400";
+  const overallColor = critical.length > 0 ? "text-red-400" : moderate.length > 0 ? "text-indigo-400" : attention.length > 0 ? "text-yellow-400" : "text-green-400";
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+    <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-[#30363D]">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 flex items-center justify-center">
             <div className="relative w-3 h-3">
               <div className="absolute inset-0 rounded-full bg-red-500/30 animate-ping" />
-              <div className={`absolute inset-0 rounded-full ${critical.length > 0 ? "bg-red-500" : moderate.length > 0 ? "bg-orange-500" : attention.length > 0 ? "bg-yellow-500" : "bg-green-500"}`} />
+              <div className={`absolute inset-0 rounded-full ${critical.length > 0 ? "bg-red-500" : moderate.length > 0 ? "bg-indigo-500" : attention.length > 0 ? "bg-yellow-500" : "bg-green-500"}`} />
             </div>
           </div>
-          <h3 className="text-sm font-semibold text-slate-200">Panel de Riesgo Académico</h3>
-          <span className="text-xs text-slate-600 ml-1">— semáforo por materia</span>
+          <h3 className="text-sm font-semibold text-[#E6EDF3]">Panel de Riesgo Académico</h3>
+          <span className="text-xs text-[#6E7681] ml-1">— semáforo por materia</span>
         </div>
         <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
           critical.length > 0 ? "bg-red-500/10 text-red-400 border-red-500/25" :
-          moderate.length > 0 ? "bg-orange-500/10 text-orange-400 border-orange-500/25" :
+          moderate.length > 0 ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/25" :
           attention.length > 0 ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/25" :
           "bg-green-500/10 text-green-400 border-green-500/25"
         }`}>
@@ -688,23 +688,23 @@ function AcademicRiskPanel({ courses }: { courses: CourseGrade[] }) {
       </div>
 
       {/* Summary row */}
-      <div className="grid grid-cols-4 divide-x divide-slate-800 border-b border-slate-800">
+      <div className="grid grid-cols-4 divide-x divide-[#30363D] border-b border-[#30363D]">
         {[
           { count: critical.length,  label: "Crítico",   color: "text-red-400",    bg: "bg-red-500" },
-          { count: moderate.length,  label: "Moderado",  color: "text-orange-400", bg: "bg-orange-500" },
+          { count: moderate.length,  label: "Moderado",  color: "text-indigo-400", bg: "bg-indigo-500" },
           { count: attention.length, label: "Atención",  color: "text-yellow-400", bg: "bg-yellow-500" },
           { count: safe.length,      label: "Sin riesgo",color: "text-green-400",  bg: "bg-green-500" },
         ].map(({ count, label, color, bg }) => (
           <div key={label} className="flex flex-col items-center justify-center py-3 gap-1">
             <div className={`w-2 h-2 rounded-full ${bg}`} />
             <span className={`text-xl font-black ${color}`}>{count}</span>
-            <span className="text-[10px] text-slate-600 text-center leading-tight">{label}</span>
+            <span className="text-[10px] text-[#6E7681] text-center leading-tight">{label}</span>
           </div>
         ))}
       </div>
 
       {/* Per-course rows */}
-      <div className="divide-y divide-slate-800/50">
+      <div className="divide-y divide-[#30363D]/50">
         {courses.map((course) => {
           const risk = getRisk(course.currentGrade, course.trend);
           return (
@@ -716,8 +716,8 @@ function AcademicRiskPanel({ courses }: { courses: CourseGrade[] }) {
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className={`w-1 h-8 rounded-full ${course.color} flex-shrink-0`} />
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-slate-200 truncate">{course.name}</p>
-                  <p className="text-[10px] text-slate-500 truncate">{risk.advice}</p>
+                  <p className="text-sm font-medium text-[#E6EDF3] truncate">{course.name}</p>
+                  <p className="text-[10px] text-[#8B949E] truncate">{risk.advice}</p>
                 </div>
               </div>
 
@@ -735,8 +735,8 @@ function AcademicRiskPanel({ courses }: { courses: CourseGrade[] }) {
         })}
       </div>
 
-      <div className="px-5 py-3 bg-slate-800/20 border-t border-slate-800/60">
-        <p className="text-[10px] text-slate-700">
+      <div className="px-5 py-3 bg-[#1C2128] border-t border-[#30363D]/60">
+        <p className="text-[10px] text-[#6E7681]">
           Basado en calificaciones actuales y tendencia de cada materia. Datos en tiempo real cuando el scraper esté activo.
         </p>
       </div>
@@ -749,7 +749,7 @@ function GradeBar({ grade, maxGrade, color }: { grade: number; maxGrade: number;
   const pct = Math.min((grade / maxGrade) * 100, 100);
   const barColor = color ?? getGradeBarColor(grade);
   return (
-    <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+    <div className="w-full h-1.5 bg-[#30363D] rounded-full overflow-hidden">
       <div
         className={`h-full rounded-full transition-all duration-500 ${barColor}`}
         style={{ width: `${pct}%` }}
@@ -764,10 +764,10 @@ function CourseCard({ course }: { course: CourseGrade }) {
   const pct = (course.currentGrade / course.maxGrade) * 100;
   const isAlert = course.currentGrade < 7;
   const TrendIcon = course.trend === "up" ? TrendingUp : course.trend === "down" ? TrendingDown : Minus;
-  const trendColor = course.trend === "up" ? "text-green-400" : course.trend === "down" ? "text-red-400" : "text-slate-500";
+  const trendColor = course.trend === "up" ? "text-green-400" : course.trend === "down" ? "text-red-400" : "text-[#8B949E]";
 
   return (
-    <div className={`bg-slate-900 border rounded-xl overflow-hidden transition-colors hover:border-slate-700 ${isAlert ? "border-red-500/30" : "border-slate-800"}`}>
+    <div className={`bg-[#161B22] border rounded-xl overflow-hidden transition-colors hover:border-[#30363D] ${isAlert ? "border-red-500/30" : "border-[#30363D]"}`}>
       {/* Alert banner */}
       {isAlert && (
         <div className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border-b border-red-500/20">
@@ -787,15 +787,15 @@ function CourseCard({ course }: { course: CourseGrade }) {
           <div className="flex items-center gap-3">
             <div className={`w-2 h-10 rounded-full ${course.color} flex-shrink-0`} />
             <div>
-              <p className="text-sm font-semibold text-slate-200">{course.name}</p>
-              <p className="text-xs text-slate-600">{course.professor}</p>
+              <p className="text-sm font-semibold text-[#E6EDF3]">{course.name}</p>
+              <p className="text-xs text-[#6E7681]">{course.professor}</p>
             </div>
           </div>
 
           <div className="flex flex-col items-end gap-1">
             <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border ${colors.bg} ${colors.border}`}>
               <span className={`text-xl font-bold ${colors.text}`}>{course.currentGrade.toFixed(1)}</span>
-              <span className="text-xs text-slate-600">/ {course.maxGrade}</span>
+              <span className="text-xs text-[#6E7681]">/ {course.maxGrade}</span>
             </div>
             <div className="flex items-center gap-1">
               <TrendIcon className={`w-3 h-3 ${trendColor}`} />
@@ -808,7 +808,7 @@ function CourseCard({ course }: { course: CourseGrade }) {
 
         {/* Overall bar */}
         <div className="mb-4">
-          <div className="flex justify-between text-xs text-slate-600 mb-1.5">
+          <div className="flex justify-between text-xs text-[#6E7681] mb-1.5">
             <span>Progreso general</span>
             <span>{pct.toFixed(0)}%</span>
           </div>
@@ -823,11 +823,11 @@ function CourseCard({ course }: { course: CourseGrade }) {
               <div key={cat.name}>
                 <div className="flex justify-between items-center mb-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-slate-500">{cat.name}</span>
-                    <span className="text-[10px] text-slate-700">({cat.weight}%)</span>
+                    <span className="text-xs text-[#8B949E]">{cat.name}</span>
+                    <span className="text-[10px] text-[#6E7681]">({cat.weight}%)</span>
                   </div>
                   <span className={`text-xs font-semibold ${catColors.text}`}>
-                    {cat.grade.toFixed(1)}<span className="text-slate-700">/{cat.maxGrade}</span>
+                    {cat.grade.toFixed(1)}<span className="text-[#6E7681]">/{cat.maxGrade}</span>
                   </span>
                 </div>
                 <GradeBar grade={cat.grade} maxGrade={cat.maxGrade} />
@@ -845,10 +845,10 @@ function SummaryChart({ courses }: { courses: CourseGrade[] }) {
   const maxBar = 160; // px height
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+    <div className="bg-[#161B22] border border-[#30363D] rounded-xl p-5">
       <div className="flex items-center gap-2 mb-5">
-        <BarChart3 className="w-4 h-4 text-orange-400" />
-        <h3 className="text-sm font-semibold text-slate-200">Resumen por materia</h3>
+        <BarChart3 className="w-4 h-4 text-indigo-400" />
+        <h3 className="text-sm font-semibold text-[#E6EDF3]">Resumen por materia</h3>
       </div>
 
       <div className="flex items-end justify-around gap-2 h-44">
@@ -874,7 +874,7 @@ function SummaryChart({ courses }: { courses: CourseGrade[] }) {
               {/* Label */}
               <div className="flex flex-col items-center">
                 <div className={`w-2 h-2 rounded-full ${course.color} mb-1`} />
-                <span className="text-[10px] text-slate-500 text-center leading-tight">{course.shortName}</span>
+                <span className="text-[10px] text-[#8B949E] text-center leading-tight">{course.shortName}</span>
               </div>
             </div>
           );
@@ -883,9 +883,9 @@ function SummaryChart({ courses }: { courses: CourseGrade[] }) {
 
       {/* Passing grade line indicator */}
       <div className="mt-3 flex items-center gap-2">
-        <div className="h-px flex-1 bg-slate-800" />
-        <span className="text-[10px] text-slate-600">Mínimo aprobatorio: 6.0</span>
-        <div className="h-px flex-1 bg-slate-800" />
+        <div className="h-px flex-1 bg-[#30363D]" />
+        <span className="text-[10px] text-[#6E7681]">Mínimo aprobatorio: 6.0</span>
+        <div className="h-px flex-1 bg-[#30363D]" />
       </div>
     </div>
   );
@@ -902,23 +902,23 @@ export default function CalificacionesPage() {
       {/* Header */}
       <section className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-slate-100">Calificaciones</h2>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <h2 className="text-xl font-bold text-[#E6EDF3]">Calificaciones</h2>
+          <p className="text-sm text-[#8B949E] mt-0.5">
             Semestre enero–junio 2026 · {COURSES.length} materias
           </p>
         </div>
-        <div className="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
-          <BarChart3 className="w-4 h-4 text-orange-400" />
+        <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+          <BarChart3 className="w-4 h-4 text-indigo-400" />
         </div>
       </section>
 
       {/* Overall average + chart */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Promedio general */}
-        <div className={`bg-slate-900 border rounded-2xl p-6 flex flex-col items-center justify-center gap-2 ${averageColors.bg} ${averageColors.border}`}>
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Promedio General</p>
+        <div className={`bg-[#161B22] border rounded-2xl p-6 flex flex-col items-center justify-center gap-2 ${averageColors.bg} ${averageColors.border}`}>
+          <p className="text-xs font-semibold text-[#8B949E] uppercase tracking-wider">Promedio General</p>
           <p className={`text-6xl font-black ${averageColors.text}`}>{average.toFixed(1)}</p>
-          <p className="text-xs text-slate-600">de 10.0 máximo</p>
+          <p className="text-xs text-[#6E7681]">de 10.0 máximo</p>
           <div className="w-full mt-2">
             <GradeBar grade={average} maxGrade={10} />
           </div>
@@ -947,10 +947,10 @@ export default function CalificacionesPage() {
               <div key={c.id} className="flex items-center justify-between py-2 border-b border-red-500/10 last:border-0">
                 <div className="flex items-center gap-2">
                   <div className={`w-1.5 h-1.5 rounded-full ${c.color}`} />
-                  <span className="text-sm text-slate-300">{c.name}</span>
+                  <span className="text-sm text-[#E6EDF3]">{c.name}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-[#8B949E]">
                     Necesitas {(6 - c.currentGrade).toFixed(1)} puntos para aprobar
                   </span>
                   <span className="text-sm font-bold text-red-400">{c.currentGrade.toFixed(1)}/10</span>

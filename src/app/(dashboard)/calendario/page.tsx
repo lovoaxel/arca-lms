@@ -150,10 +150,10 @@ function getDaysLabel(dateStr: string): { text: string; color: string } {
 
   if (diffDays < 0)  return { text: `Hace ${Math.abs(diffDays)} día${Math.abs(diffDays) !== 1 ? "s" : ""}`, color: "text-red-400" };
   if (diffDays === 0) return { text: "Hoy", color: "text-red-400 font-bold" };
-  if (diffDays === 1) return { text: "Mañana", color: "text-orange-400" };
+  if (diffDays === 1) return { text: "Mañana", color: "text-[#D29922]" };
   if (diffDays < 7)  return { text: `En ${diffDays} días`, color: "text-yellow-400" };
   if (diffDays < 14) return { text: `En ${diffDays} días`, color: "text-blue-400" };
-  return { text: `En ${diffDays} días`, color: "text-slate-500" };
+  return { text: `En ${diffDays} días`, color: "text-[#8B949E]" };
 }
 
 function formatDateHeader(dateStr: string): string {
@@ -201,37 +201,37 @@ function DeliveryCard({ item }: { item: DeliveryItem }) {
   const TypeIcon = TYPE_ICONS[item.type];
 
   return (
-    <div className="flex items-stretch gap-0 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden hover:border-slate-700 transition-colors">
+    <div className="flex items-stretch gap-0 bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden hover:border-[#30363D] transition-colors">
       {/* Color bar */}
       <div className={`w-1 flex-shrink-0 ${styles.bar}`} />
 
       <div className="flex items-center gap-4 px-4 py-3.5 flex-1 min-w-0">
         {/* Type icon */}
-        <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${item.type === "exam" ? "bg-red-500/10" : "bg-slate-800"}`}>
-          <TypeIcon className={`w-4 h-4 ${item.type === "exam" ? "text-red-400" : "text-slate-400"}`} />
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${item.type === "exam" ? "bg-red-500/10" : "bg-[#30363D]"}`}>
+          <TypeIcon className={`w-4 h-4 ${item.type === "exam" ? "text-red-400" : "text-[#8B949E]"}`} />
         </div>
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-slate-200 truncate">{item.title}</p>
+          <p className="text-sm font-medium text-[#E6EDF3] truncate">{item.title}</p>
           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
             <div className="flex items-center gap-1.5">
               <span className={`w-1.5 h-1.5 rounded-full ${item.courseColor} flex-shrink-0`} />
-              <span className="text-xs text-slate-500 truncate">{item.courseName}</span>
+              <span className="text-xs text-[#8B949E] truncate">{item.courseName}</span>
             </div>
             {item.time && (
               <>
-                <span className="text-slate-700">·</span>
+                <span className="text-[#30363D]">·</span>
                 <div className="flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-slate-600" />
-                  <span className="text-xs text-slate-600">{item.time}</span>
+                  <Clock className="w-3 h-3 text-[#6E7681]" />
+                  <span className="text-xs text-[#6E7681]">{item.time}</span>
                 </div>
               </>
             )}
             {item.location && (
               <>
-                <span className="text-slate-700">·</span>
-                <span className="text-xs text-slate-600">{item.location}</span>
+                <span className="text-[#30363D]">·</span>
+                <span className="text-xs text-[#6E7681]">{item.location}</span>
               </>
             )}
           </div>
@@ -244,7 +244,7 @@ function DeliveryCard({ item }: { item: DeliveryItem }) {
             <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${styles.badge}`}>
               {styles.label}
             </span>
-            <span className="text-[10px] text-slate-600 uppercase tracking-wide">
+            <span className="text-[10px] text-[#6E7681] uppercase tracking-wide">
               {TYPE_LABELS[item.type]}
             </span>
           </div>
@@ -268,8 +268,8 @@ export default function CalendarioPage() {
       {/* Header */}
       <section className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-slate-100">Calendario de Entregas</h2>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <h2 className="text-xl font-bold text-[#E6EDF3]">Calendario de Entregas</h2>
+          <p className="text-sm text-[#8B949E] mt-0.5">
             Semestre enero–junio 2026 · {totalPending} próximas · {totalOverdue > 0 ? `${totalOverdue} vencidas` : "0 vencidas"}
           </p>
         </div>
@@ -277,24 +277,24 @@ export default function CalendarioPage() {
           <button
             onClick={() => downloadICS(DELIVERIES)}
             title="Exportar a Google Calendar / Apple Calendar / Outlook"
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs font-medium text-slate-300 hover:bg-slate-700 hover:text-slate-100 hover:border-orange-500/40 transition-all"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#30363D] border border-[#30363D] text-xs font-medium text-[#E6EDF3] hover:bg-[#30363D] hover:text-[#E6EDF3] hover:border-indigo-500/40 transition-all"
           >
-            <Download className="w-3.5 h-3.5 text-orange-400" />
+            <Download className="w-3.5 h-3.5 text-indigo-400" />
             Exportar .ics
           </button>
-          <div className="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
-            <Calendar className="w-4 h-4 text-orange-400" />
+          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+            <Calendar className="w-4 h-4 text-indigo-400" />
           </div>
         </div>
       </section>
 
       {/* Legend */}
-      <div className="flex items-center gap-4 p-3 bg-slate-900 border border-slate-800 rounded-xl flex-wrap">
-        <span className="text-xs text-slate-500 font-medium">Urgencia:</span>
+      <div className="flex items-center gap-4 p-3 bg-[#161B22] border border-[#30363D] rounded-xl flex-wrap">
+        <span className="text-xs text-[#8B949E] font-medium">Urgencia:</span>
         {Object.entries(URGENCY_STYLES).map(([key, val]) => (
           <div key={key} className="flex items-center gap-1.5">
             <div className={`w-2 h-2 rounded-full ${val.bar}`} />
-            <span className="text-xs text-slate-500">{val.label}</span>
+            <span className="text-xs text-[#8B949E]">{val.label}</span>
           </div>
         ))}
       </div>
@@ -306,9 +306,9 @@ export default function CalendarioPage() {
             {/* Group header */}
             <div className="flex items-center gap-3 mb-3">
               <div className={`w-2 h-2 rounded-full ${URGENCY_STYLES[group.urgency].bar}`} />
-              <h3 className="text-sm font-semibold text-slate-300">{group.label}</h3>
-              <div className="flex-1 h-px bg-slate-800" />
-              <span className="text-xs text-slate-600">{group.items.length} evento{group.items.length !== 1 ? "s" : ""}</span>
+              <h3 className="text-sm font-semibold text-[#E6EDF3]">{group.label}</h3>
+              <div className="flex-1 h-px bg-[#30363D]" />
+              <span className="text-xs text-[#6E7681]">{group.items.length} evento{group.items.length !== 1 ? "s" : ""}</span>
             </div>
 
             {/* Daily sub-groups */}
@@ -319,7 +319,7 @@ export default function CalendarioPage() {
                 return (
                   <div key={date}>
                     {/* Date label */}
-                    <p className="text-xs font-medium text-slate-500 mb-2 ml-1 capitalize">
+                    <p className="text-xs font-medium text-[#8B949E] mb-2 ml-1 capitalize">
                       {formatDateHeader(date)}
                     </p>
                     <div className="space-y-2 ml-0">

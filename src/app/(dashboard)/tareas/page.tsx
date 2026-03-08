@@ -245,8 +245,8 @@ def round_robin(procesos, quantum):
 - Ningún atributo no clave depende de otro no clave
 
 ## Ejemplo de justificación:
-> "La tabla EMPLEADO(id, nombre, depto_id, depto_nombre) viola 3FN porque 
-> depto_nombre depende transitivamente de id a través de depto_id. 
+> "La tabla EMPLEADO(id, nombre, depto_id, depto_nombre) viola 3FN porque
+> depto_nombre depende transitivamente de id a través de depto_id.
 > Solución: crear tabla DEPARTAMENTO(id, nombre)."`,
 
   a10: `# Borrador — Fase 2: Business Model Canvas
@@ -288,11 +288,11 @@ function formatDueDate(iso: string): { label: string; color: string } {
     label: `Hoy ${due.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" })}`,
     color: "text-red-400",
   };
-  if (diffD === 1) return { label: "Mañana", color: "text-orange-400" };
+  if (diffD === 1) return { label: "Mañana", color: "text-[#D29922]" };
   if (diffD < 7) return { label: `En ${diffD} días`, color: "text-yellow-400" };
   return {
     label: due.toLocaleDateString("es-MX", { day: "numeric", month: "short" }),
-    color: "text-slate-500",
+    color: "text-[#8B949E]",
   };
 }
 
@@ -306,9 +306,9 @@ const STATUS_CONFIG: Record<Assignment["status"], { label: string; icon: React.C
 
 const PRIORITY_CONFIG: Record<Assignment["priority"], { label: string; cls: string }> = {
   urgent: { label: "Urgente", cls: "text-red-400 bg-red-500/10 border-red-500/20" },
-  high:   { label: "Alta",    cls: "text-orange-400 bg-orange-500/10 border-orange-500/20" },
+  high:   { label: "Alta",    cls: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20" },
   medium: { label: "Media",   cls: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20" },
-  low:    { label: "Normal",  cls: "text-slate-400 bg-slate-700/40 border-slate-700" },
+  low:    { label: "Normal",  cls: "text-[#8B949E] bg-[#1C2128] border-[#30363D]" },
 };
 
 // ─── AI Draft Modal ────────────────────────────────────────────
@@ -325,25 +325,25 @@ function AIDraftModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-[#0D1117]/80 backdrop-blur-sm"
         onClick={onClose}
       />
       {/* Modal */}
-      <div className="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-h-[80vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-[#161B22] border border-[#30363D] rounded-2xl shadow-2xl max-h-[80vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#30363D]">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-orange-500/15 border border-orange-500/20 flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-orange-400" />
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-indigo-400" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-200">Borrador IA — Jarvis</p>
-              <p className="text-xs text-slate-500 truncate max-w-xs">{assignment.title}</p>
+              <p className="text-sm font-semibold text-[#E6EDF3]">Borrador IA — Jarvis</p>
+              <p className="text-xs text-[#8B949E] truncate max-w-xs">{assignment.title}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-lg text-[#8B949E] hover:text-[#E6EDF3] hover:bg-[#30363D] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -353,25 +353,25 @@ function AIDraftModal({
           <div className="prose prose-sm prose-invert max-w-none">
             {draft.split("\n").map((line, i) => {
               if (line.startsWith("## "))
-                return <h2 key={i} className="text-sm font-semibold text-orange-400 mt-4 mb-2">{line.replace("## ", "")}</h2>;
+                return <h2 key={i} className="text-sm font-semibold text-indigo-400 mt-4 mb-2">{line.replace("## ", "")}</h2>;
               if (line.startsWith("# "))
-                return <h1 key={i} className="text-base font-bold text-slate-100 mb-3">{line.replace("# ", "")}</h1>;
+                return <h1 key={i} className="text-base font-bold text-[#E6EDF3] mb-3">{line.replace("# ", "")}</h1>;
               if (line.startsWith("### "))
-                return <h3 key={i} className="text-sm font-semibold text-slate-300 mt-3 mb-1">{line.replace("### ", "")}</h3>;
+                return <h3 key={i} className="text-sm font-semibold text-[#E6EDF3] mt-3 mb-1">{line.replace("### ", "")}</h3>;
               if (line.startsWith("- "))
-                return <p key={i} className="text-sm text-slate-400 ml-4">• {line.replace("- ", "")}</p>;
+                return <p key={i} className="text-sm text-[#8B949E] ml-4">• {line.replace("- ", "")}</p>;
               if (line.startsWith("```"))
                 return null;
               if (line.trim() === "")
                 return <div key={i} className="h-2" />;
-              return <p key={i} className="text-sm text-slate-400 leading-relaxed">{line}</p>;
+              return <p key={i} className="text-sm text-[#8B949E] leading-relaxed">{line}</p>;
             })}
           </div>
         </div>
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-slate-800 flex items-center gap-2">
-          <Sparkles className="w-3.5 h-3.5 text-orange-400" />
-          <p className="text-xs text-slate-600">Generado por Jarvis · Solo orientativo, verifica con tu profesor</p>
+        <div className="px-6 py-3 border-t border-[#30363D] flex items-center gap-2">
+          <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+          <p className="text-xs text-[#6E7681]">Generado por Jarvis · Solo orientativo, verifica con tu profesor</p>
         </div>
       </div>
     </div>
@@ -394,7 +394,7 @@ function AssignmentRow({
 
   return (
     <div className={`
-      flex items-center gap-4 px-4 py-3.5 hover:bg-slate-800/40 transition-colors border-b border-slate-800/60 last:border-0
+      flex items-center gap-4 px-4 py-3.5 hover:bg-[#30363D]/40 transition-colors border-b border-[#30363D]/60 last:border-0
       ${overdue ? "bg-red-500/5" : ""}
     `}>
       {/* Status icon */}
@@ -402,9 +402,9 @@ function AssignmentRow({
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-slate-200 truncate">{assignment.title}</p>
+        <p className="text-sm font-medium text-[#E6EDF3] truncate">{assignment.title}</p>
         {assignment.description && (
-          <p className="text-xs text-slate-600 truncate mt-0.5">{assignment.description}</p>
+          <p className="text-xs text-[#6E7681] truncate mt-0.5">{assignment.description}</p>
         )}
         <div className="flex items-center gap-2 mt-1 flex-wrap">
           <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${priorityConfig.cls}`}>
@@ -414,8 +414,8 @@ function AssignmentRow({
             {dueLabel}
           </span>
           {assignment.grade !== undefined && (
-            <span className="text-xs text-slate-500">
-              Calificación: <span className="text-slate-300 font-medium">{assignment.grade}/{assignment.maxGrade}</span>
+            <span className="text-xs text-[#8B949E]">
+              Calificación: <span className="text-[#E6EDF3] font-medium">{assignment.grade}/{assignment.maxGrade}</span>
             </span>
           )}
         </div>
@@ -425,7 +425,7 @@ function AssignmentRow({
       {(assignment.status === "pending" || assignment.status === "late") && (
         <button
           onClick={() => onViewDraft(assignment)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-medium hover:bg-orange-500/20 transition-colors flex-shrink-0"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium hover:bg-indigo-500/20 transition-colors flex-shrink-0"
         >
           <Sparkles className="w-3 h-3" />
           <span className="hidden sm:inline">Ver borrador IA</span>
@@ -454,27 +454,27 @@ function CourseGroup({
   const pendingCount = assignments.filter((a) => a.status === "pending").length;
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+    <div className="bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden">
       {/* Course Header */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="w-full flex items-center gap-3 px-4 py-3.5 border-b border-slate-800 hover:bg-slate-800/40 transition-colors"
+        className="w-full flex items-center gap-3 px-4 py-3.5 border-b border-[#30363D] hover:bg-[#30363D]/40 transition-colors"
       >
         <div className={`w-3 h-3 rounded-full ${courseColor} flex-shrink-0`} />
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <BookOpen className="w-3.5 h-3.5 text-slate-500" />
-          <span className="text-sm font-semibold text-slate-200">{courseName}</span>
+          <BookOpen className="w-3.5 h-3.5 text-[#8B949E]" />
+          <span className="text-sm font-semibold text-[#E6EDF3]">{courseName}</span>
           {pendingCount > 0 && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-orange-500/15 text-orange-400 font-medium">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 font-medium">
               {pendingCount} pendiente{pendingCount > 1 ? "s" : ""}
             </span>
           )}
         </div>
-        <span className="text-xs text-slate-600">{assignments.length} tarea{assignments.length !== 1 ? "s" : ""}</span>
+        <span className="text-xs text-[#6E7681]">{assignments.length} tarea{assignments.length !== 1 ? "s" : ""}</span>
         {collapsed ? (
-          <ChevronRight className="w-4 h-4 text-slate-600" />
+          <ChevronRight className="w-4 h-4 text-[#6E7681]" />
         ) : (
-          <ChevronDown className="w-4 h-4 text-slate-600" />
+          <ChevronDown className="w-4 h-4 text-[#6E7681]" />
         )}
       </button>
 
@@ -509,7 +509,7 @@ export default function TareasPage() {
     return {
       courseId,
       courseName: first.courseName,
-      courseColor: first.courseColor ?? "bg-slate-500",
+      courseColor: first.courseColor ?? "bg-[#8B949E]",
       assignments: filtered.filter((a) => a.courseId === courseId),
     };
   });
@@ -527,18 +527,18 @@ export default function TareasPage() {
         {/* Header */}
         <section className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-slate-100">Tareas</h2>
-            <p className="text-sm text-slate-500 mt-0.5">
+            <h2 className="text-xl font-bold text-[#E6EDF3]">Tareas</h2>
+            <p className="text-sm text-[#8B949E] mt-0.5">
               {MOCK_ASSIGNMENTS.filter((a) => a.status === "pending").length} pendientes · {MOCK_ASSIGNMENTS.length} total
             </p>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
-            <ClipboardList className="w-4 h-4 text-orange-400" />
+          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+            <ClipboardList className="w-4 h-4 text-indigo-400" />
           </div>
         </section>
 
         {/* Filters */}
-        <div className="flex items-center gap-1 p-1 bg-slate-900 border border-slate-800 rounded-xl w-fit">
+        <div className="flex items-center gap-1 p-1 bg-[#161B22] border border-[#30363D] rounded-xl w-fit">
           {FILTERS.map((f) => (
             <button
               key={f.key}
@@ -546,13 +546,13 @@ export default function TareasPage() {
               className={`
                 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150
                 ${activeFilter === f.key
-                  ? "bg-orange-500/15 text-orange-400 border border-orange-500/20"
-                  : "text-slate-500 hover:text-slate-300"
+                  ? "bg-indigo-500/15 text-indigo-400 border border-indigo-500/20"
+                  : "text-[#8B949E] hover:text-[#E6EDF3]"
                 }
               `}
             >
               {f.label}
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${activeFilter === f.key ? "bg-orange-500/20 text-orange-400" : "bg-slate-800 text-slate-500"}`}>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${activeFilter === f.key ? "bg-indigo-500/20 text-indigo-400" : "bg-[#30363D] text-[#8B949E]"}`}>
                 {f.count}
               </span>
             </button>
@@ -563,7 +563,7 @@ export default function TareasPage() {
         {courses.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 gap-3">
             <CheckCircle2 className="w-10 h-10 text-green-500/50" />
-            <p className="text-sm text-slate-500">No hay tareas en esta categoría 🎉</p>
+            <p className="text-sm text-[#8B949E]">No hay tareas en esta categoría 🎉</p>
           </div>
         ) : (
           <div className="space-y-4">
